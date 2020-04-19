@@ -1,4 +1,4 @@
-﻿using AX.Framework.Extension;
+﻿
 using System;
 using System.Security.Cryptography;
 using System.Text;
