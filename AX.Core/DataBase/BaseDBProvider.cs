@@ -1,4 +1,5 @@
 ﻿using AX.Core.CommonModel;
+using AX.Core.DataBase.Configs;
 using AX.Core.Extension;
 using System;
 using System.Collections.Generic;
@@ -10,14 +11,22 @@ using System.Text.RegularExpressions;
 
 namespace AX.Core.DataBase
 {
-    public abstract class BaseProvider
+    public abstract class BaseDBProvider
     {
-        public BaseProvider()
+        public BaseDBProvider()
         {
             _sqlBuilder = new SqlBuilder(LeftEscapeChar, RightEscapeChar, DbParmChar);
         }
 
+        public void UseConfig(IDBConfig dBConfig)
+        {
+            _dbConfig = dBConfig;
+            _sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);
+        }
+
         #region 私有变量/方法
+
+        public IDBConfig _dbConfig;
 
         public DbTransaction _dbTransaction;
 
@@ -86,7 +95,7 @@ namespace AX.Core.DataBase
 
         #endregion 私有变量/方法
 
-        #region 需要子类实现 的属性/方法
+        #region 可以子类实现 的属性/方法
 
         /// <summary>
         /// sql语句中为屏蔽关键字使用的左侧关键字特殊字符
@@ -118,7 +127,7 @@ namespace AX.Core.DataBase
         /// </summary>
         public virtual int Timeout { get { return 50000; } }
 
-        #endregion 需要子类实现 的属性/方法
+        #endregion 可以子类实现 的属性/方法
 
         #region Execute
 
