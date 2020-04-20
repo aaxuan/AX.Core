@@ -1,86 +1,32 @@
-﻿namespace AX.Framework.Encryption
+﻿using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace AX.Framework.Encryption
 {
-    internal class DES
+    public static class DES
     {
+        public static string Encrypt(string data, string key, Encoding encoding)
+        {
+            key = key.Substring(0, 8);
+            if (encoding == null)
+            { encoding = Encoding.UTF8; }
+            byte[] byteData = encoding.GetBytes(data);
+            byte[] byteKey = encoding.GetBytes(key);
+            DESCryptoServiceProvider desProcider = new DESCryptoServiceProvider();
+            //DES一共有电子密码本模式（ECB）、加密分组链接模式（CBC）、加密反馈模式（CFB）和输出反馈模式（OFB）四种模式
+            desProcider.Mode = CipherMode.ECB;
+            //desProcider.Padding = PaddingMode.PKCS7;
+            desProcider.Key = byteKey;
+            desProcider.IV = byteKey;
+
+            MemoryStream ms = new MemoryStream();
+            CryptoStream cs = new CryptoStream(ms, desProcider.CreateEncryptor(), CryptoStreamMode.Write);
+            cs.Write(byteData, 0, byteData.Length);
+            cs.FlushFinalBlock();
+            var result = Convert.ToBase64String(ms.ToArray());
+            return result;
+        }
     }
 }
-
-///// <summary>
-///// 默认密钥向量
-///// </summary>
-//private byte[] Keys = { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
-///// <summary>
-///// 默认密钥
-///// </summary>
-//private String CryptKey = "bjlzmiscp";
-///// <summary>
-///// DES加密字符串
-///// </summary>
-///// <param name="encryptString">待加密的字符串</param>
-///// <returns>加密成功返回加密后的字符串,失败返回源串</returns>
-//public string Encode(string encryptString)
-//{
-//    return Encode(encryptString, CryptKey);
-//}
-
-///// <summary>
-///// DES解密字符串
-///// </summary>
-///// <param name="decryptString">待解密的字符串</param>
-///// <returns>解密成功返回解密后的字符串,失败返源串</returns>
-//public string Decode(string decryptString)
-//{
-//    return Decode(decryptString, CryptKey);
-//}
-
-///// <summary>
-///// DES加密字符串
-///// </summary>
-///// <param name="encryptString">待加密的字符串</param>
-///// <param name="encryptKey">加密密钥,要求为8位</param>
-///// <returns>加密成功返回加密后的字符串,失败返回源串</returns>
-//public string Encode(string encryptString, string encryptKey)
-//{
-//    encryptKey = LZUtils.GetSubString(encryptKey, 8, "");
-//    encryptKey = encryptKey.PadRight(8, ' ');
-//    byte[] rgbKey = Encoding.UTF8.GetBytes(encryptKey.Substring(0, 8));
-//    byte[] rgbIV = Keys;
-//    byte[] inputByteArray = Encoding.UTF8.GetBytes(encryptString);
-//    DESCryptoServiceProvider dCSP = new DESCryptoServiceProvider();
-//    MemoryStream mStream = new MemoryStream();
-//    CryptoStream cStream = new CryptoStream(mStream, dCSP.CreateEncryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
-//    cStream.Write(inputByteArray, 0, inputByteArray.Length);
-//    cStream.FlushFinalBlock();
-//    return Convert.ToBase64String(mStream.ToArray());
-
-//}
-
-///// <summary>
-///// DES解密字符串
-///// </summary>
-///// <param name="decryptString">待解密的字符串</param>
-///// <param name="decryptKey">解密密钥,要求为8位,和加密密钥相同</param>
-///// <returns>解密成功返回解密后的字符串,失败返源串</returns>
-//public string Decode(string decryptString, string decryptKey)
-//{
-//    try
-//    {
-//        decryptKey = LZUtils.GetSubString(decryptKey, 8, "");
-//        decryptKey = decryptKey.PadRight(8, ' ');
-//        byte[] rgbKey = Encoding.UTF8.GetBytes(decryptKey);
-//        byte[] rgbIV = Keys;
-//        byte[] inputByteArray = Convert.FromBase64String(decryptString);
-//        DESCryptoServiceProvider DCSP = new DESCryptoServiceProvider();
-
-//        MemoryStream mStream = new MemoryStream();
-//        CryptoStream cStream = new CryptoStream(mStream, DCSP.CreateDecryptor(rgbKey, rgbIV), CryptoStreamMode.Write);
-//        cStream.Write(inputByteArray, 0, inputByteArray.Length);
-//        cStream.FlushFinalBlock();
-//        return Encoding.UTF8.GetString(mStream.ToArray());
-//    }
-//    catch
-//    {
-//        return "";
-//    }
-
-//}
