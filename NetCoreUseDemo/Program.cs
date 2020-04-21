@@ -1,12 +1,40 @@
-﻿using System;
+﻿using NetCoreUseDemo;
+using System;
 
 namespace NetCoreUseDemo
 {
-    class Program
+    public class DemoTable
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }
+        public string Id { get; set; }
+
+        public DateTime CreateTime { get; set; }
+
+        public DateTime? CreateTime2 { get; set; }
+
+        public bool isuse { get; set; }
+
+        public decimal money { get; set; }
+
+        public decimal? money2 { get; set; }
+    }
+}
+
+internal class Program
+{
+    private static void Main(string[] args)
+    {
+        var db = new DB();
+        db.UseConfig(new AX.Core.DataBase.Configs.MySqlConfig());
+
+        db.SetSchema<DemoTable>(true);
+        var guid = db.NewId;
+        var model = db.Insert<DemoTable>(new DemoTable() { Id = guid, CreateTime = DateTime.Now, isuse = true, money = 98.8M });
+        model.CreateTime2 = DateTime.Now;
+        model.money2 = 100.02M;
+        db.Update<DemoTable>(model);
+
+        
+
+        var n = 1;
     }
 }

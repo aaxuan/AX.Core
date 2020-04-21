@@ -215,6 +215,9 @@ namespace AX.Core.DataBase
                 if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
                 { result = DbType.DateTime; }
 
+                if (value.GetType() == typeof(bool))
+                { result = DbType.Boolean; }
+
                 if (value.GetType() == typeof(string))
                 { result = DbType.String; }
             }

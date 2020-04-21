@@ -11,36 +11,37 @@ using System.Text.RegularExpressions;
 
 namespace AX.Core.DataBase
 {
-    public abstract class BaseDBProvider
+    public abstract class AXDataBase
     {
-        public BaseDBProvider()
-        {
-            _sqlBuilder = new SqlBuilder(LeftEscapeChar, RightEscapeChar, DbParmChar);
-        }
+        public AXDataBase()
+        { }
 
-        public void UseConfig(IDBConfig dBConfig)
+        public void UseConfig(IDBDialectConfig dBConfig)
         {
             _dbConfig = dBConfig;
             _sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);
         }
 
+        public string NewId
+        { get { return Guid.NewGuid().ToString("N"); } }
+
         #region 私有变量/方法
 
-        public IDBConfig _dbConfig;
+        private IDBDialectConfig _dbConfig;
 
-        public DbTransaction _dbTransaction;
+        private DbTransaction _dbTransaction;
 
-        public SqlBuilder _sqlBuilder;
+        private SqlBuilder _sqlBuilder;
 
-        public void TryOpenConn()
+        private void TryOpenConn()
         {
             if (Connection.State != ConnectionState.Open)
             { Connection.Open(); }
         }
 
-        public void SetParameters(DbCommand cmd, string sql, object[] args)
+        private void SetParameters(DbCommand cmd, string sql, object[] args)
         {
-            var regexStr = DbParmChar + "\\w+";
+            var regexStr = _dbConfig.DbParmChar + "\\w+";
             var parmars = Regex.Matches(sql, regexStr);
 
             //无参数情况
@@ -58,6 +59,7 @@ namespace AX.Core.DataBase
                     Match parm = parmars[i];
                     cmd.Parameters.Add(_sqlBuilder.GetParameter(cmd, obj, objType.GetProperty(parm.Value.Substring(1, parm.Value.Length - 1))));
                 }
+                return;
             }
 
             if (parmars.Count != args.Length)
@@ -79,7 +81,6 @@ namespace AX.Core.DataBase
 
         private void CreateSqlCommand(DbCommand cmd, CommandType cmdType, string sql, object[] args)
         {
-            TryOpenConn();
             cmd.Connection = Connection;
             cmd.CommandText = sql;
             cmd.CommandType = cmdType;
@@ -88,32 +89,18 @@ namespace AX.Core.DataBase
             { cmd.Transaction = _dbTransaction; }
             //参数
             if (args != null && args.Length != 0)
-            {
-                SetParameters(cmd, sql, args);
-            }
+            { SetParameters(cmd, sql, args); }
+
+            TryOpenConn();
         }
 
         #endregion 私有变量/方法
 
-        #region 可以子类实现 的属性/方法
-
-        /// <summary>
-        /// sql语句中为屏蔽关键字使用的左侧关键字特殊字符
-        /// </summary>
-        public abstract string LeftEscapeChar { get; }
-
-        /// <summary>
-        /// sql语句中为屏蔽关键字使用的右侧关键字特殊字符
-        /// </summary>
-        public abstract string RightEscapeChar { get; }
-
-        /// <summary>
-        /// 传参使用的参数符号
-        /// </summary>
-        public abstract string DbParmChar { get; }
+        #region 继承应实现 的属性/方法
 
         /// <summary>
         /// 获取链接
+        /// 继承类应实现私有变量缓存链接
         /// </summary>
         public abstract DbConnection Connection { get; }
 
@@ -127,43 +114,45 @@ namespace AX.Core.DataBase
         /// </summary>
         public virtual int Timeout { get { return 50000; } }
 
-        #endregion 可以子类实现 的属性/方法
+        #endregion 继承应实现 的属性/方法
 
         #region Execute
 
         public int ExecuteNonQuery(string sql, params object[] args)
         {
-            TryOpenConn();
-            var cmd = Connection.CreateCommand();
+            var cmd = Factory.CreateCommand();
             CreateSqlCommand(cmd, CommandType.Text, sql, args);
             return cmd.ExecuteNonQuery();
         }
 
         public T ExecuteScalar<T>(string sql, params object[] args)
         {
-            TryOpenConn();
-            var cmd = Connection.CreateCommand();
+            var cmd = Factory.CreateCommand();
             CreateSqlCommand(cmd, CommandType.Text, sql, args);
-            var result = cmd.ExecuteScalar();
+            object result = cmd.ExecuteScalar();
             return (T)Convert.ChangeType(result, typeof(T));
         }
 
         #endregion Execute
 
-        //public void Save<T>(T entity)
-        //{
-        //    if (IsExists<T>(entity))
-        //    { Update<T>(entity); }
-        //    else
-        //    { Insert<T>(entity); }
-        //}
+        public void Save<T>(T entity)
+        {
+            if (IsExists<T>(SchemaManage.GetPrimaryKey<T>().GetValue(entity, null)))
+            { Update<T>(entity); }
+            else
+            { Insert<T>(entity); }
+        }
 
         #region 插入
 
         public T Insert<T>(T entity)
         {
             if (entity == null)
-            { throw new AXDataBaseException($"不能保存 Null 实体 【{typeof(T).FullName}】", string.Empty); }
+            { throw new AXDataBaseException($"不能保存 Null 实体 【{typeof(T).FullName}】"); }
+            //自动设置主键
+            var key = SchemaManage.GetPrimaryKey<T>();
+            if (key.GetValue(entity, null) == null)
+            { key.SetValue(entity, NewId); }
             var sql = _sqlBuilder.BuildInsertSql<T>(SchemaManage.GetTableName<T>());
             var result = ExecuteNonQuery(sql.ToString(), entity);
             return entity;
@@ -177,8 +166,31 @@ namespace AX.Core.DataBase
         {
             var key = SchemaManage.GetPrimaryKey<T>();
             if (entity == null)
-            { throw new AXDataBaseException($"不能更新 Null 实体 【{typeof(T).FullName}】", string.Empty); }
-            var sb = _sqlBuilder.BuildUpdateByIdSql<T>(SchemaManage.GetTableName<T>(), typeof(T).GetProperties().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray());
+            { throw new AXDataBaseException($"不能更新 Null 实体 【{typeof(T).FullName}】"); }
+            if (key.GetValue(entity, null) == null)
+            { throw new AXDataBaseException($"不能更新 主键无值 实体 【{typeof(T).FullName}】"); }
+            var upfield = typeof(T).GetProperties().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
+            var sb = _sqlBuilder.BuildUpdateByIdSql<T>(SchemaManage.GetTableName<T>(), upfield);
+            var result = ExecuteNonQuery(sb.ToString(), entity);
+            return result;
+        }
+
+        public int Update<T>(T entity, string fields)
+        {
+            var key = SchemaManage.GetPrimaryKey<T>();
+            if (entity == null)
+            { throw new AXDataBaseException($"不能更新 Null 实体 【{typeof(T).FullName}】"); }
+            if (key.GetValue(entity, null) == null)
+            { throw new AXDataBaseException($"不能更新 主键无值 实体 【{typeof(T).FullName}】"); }
+            var allField = typeof(T).GetProperties().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
+            var upfields = new List<string>();
+            var upFieldStrs = fields.Split(",");
+            foreach (var item in upFieldStrs)
+            {
+                if (allField.Contains(item))
+                { upfields.Add(item); }
+            }
+            var sb = _sqlBuilder.BuildUpdateByIdSql<T>(SchemaManage.GetTableName<T>(), upfields.ToArray());
             var result = ExecuteNonQuery(sb.ToString(), entity);
             return result;
         }
@@ -217,31 +229,19 @@ namespace AX.Core.DataBase
 
         #region 查询
 
-        //public bool IsExists<T>(T entity)
-        //{
-        //
-        //    if (entity == null)
-        //    { return false; }
-        //    var tableMetaData = TableMapper.GetMetaData(currenttype);
-        //    var idvalue = tableMetaData.IdProperty.GetValue(entity);
-        //    return IsExists<T>(idvalue);
-        //}
-
-        //public bool IsExists<T>(object id)
-        //{
-        //
-        //    if (id == null)
-        //    { return false; }
-        //    var tableMetaData = TableMapper.GetMetaData(currenttype);
-        //    var sb = _common.BuildSelectCountSql(GetSchemaTableName(currenttype));
-        //    sb.AppendFormat(" AND {0} ", _common.GetEqualConditions(tableMetaData.IdProperty.Name).First());
-        //    var result = Connection.ExecuteScalar<int>(sb.ToString(), _common.GetDynamicParameters(sb.ToString(), new object[] { id }), DbTransaction, CommandTimeout);
-        //    if (result > 0)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
+        public bool IsExists<T>(object id)
+        {
+            if (id == null)
+            { return false; }
+            var sb = _sqlBuilder.BuildSelectCountSql(SchemaManage.GetTableName<T>());
+            sb.AppendFormat(" AND {0} ", _sqlBuilder.GetEqualConditions(SchemaManage.GetPrimaryKey<T>().Name).First());
+            var result = ExecuteScalar<int>(sb.ToString(), new object[] { id });
+            if (result > 0)
+            {
+                return true;
+            }
+            return false;
+        }
 
         public long GetCount<T>()
         {
@@ -262,7 +262,7 @@ namespace AX.Core.DataBase
         public DataTable GetDataTable(string sql, params object[] args)
         {
             var result = new DataTable();
-            var cmd = Connection.CreateCommand();
+            var cmd = Factory.CreateCommand();
             CreateSqlCommand(cmd, CommandType.Text, sql, args);
             var reader = cmd.ExecuteReader();
             result.Load(reader);
@@ -331,14 +331,14 @@ namespace AX.Core.DataBase
         public void BeginTransaction()
         {
             if (_dbTransaction != null)
-            { throw new AXDataBaseException($"已存在事务", string.Empty); }
+            { throw new AXDataBaseException($"已存在事务"); }
             _dbTransaction = Connection.BeginTransaction();
         }
 
         public void CompleteTransaction()
         {
             if (_dbTransaction == null)
-            { throw new AXDataBaseException($"当前无事务", string.Empty); }
+            { throw new AXDataBaseException($"当前无事务"); }
             _dbTransaction.Commit();
             _dbTransaction.Dispose();
             _dbTransaction = null;
@@ -347,7 +347,7 @@ namespace AX.Core.DataBase
         public void AbortTransaction()
         {
             if (_dbTransaction == null)
-            { throw new AXDataBaseException($"当前无事务", string.Empty); }
+            { throw new AXDataBaseException($"当前无事务"); }
             _dbTransaction.Rollback();
             _dbTransaction.Dispose();
             _dbTransaction = null;
@@ -357,9 +357,49 @@ namespace AX.Core.DataBase
 
         #region 结构
 
-        //public abstract string SetSchema<T>(bool execute);
+        public String SetSchema<T>(bool execute)
+        {
+            var result = new StringBuilder();
+            var dbName = Connection.Database;
+            var tableName = SchemaManage.GetTableName<T>();
+            var fields = typeof(T).GetProperties();
 
-        //public abstract string SetSchema(Type type, bool execute);
+            //判断表是否存在
+            var exitSql = _dbConfig.GetTableExitSql(tableName, dbName);
+            if (ExecuteScalar<int>(exitSql) <= 0)
+            {
+                result.Append(GetCreateTableSql<T>(result));
+            }
+            //判断字段是否存在
+            else
+            {
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    var item = fields[i];
+                    var filedExitSql = _dbConfig.GetFiledExitSql(item.Name, tableName, dbName);
+                    if (ExecuteScalar<int>(filedExitSql) <= 0)
+                    {
+                        result.Append(_dbConfig.GetCreateFieldSql(tableName, item));
+                    }
+                }
+            }
+
+            if (execute && result.Length > 0)
+            { ExecuteNonQuery(result.ToString()); }
+            return result.ToString();
+        }
+
+        public String GetCreateTableSql<T>(StringBuilder sb)
+        {
+            var tableName = _sqlBuilder.UseEscapeChar(SchemaManage.GetTableName<T>());
+            var keyName = SchemaManage.GetPrimaryKey<T>().Name;
+            var fields = typeof(T).GetProperties();
+
+            if (sb == null)
+            { sb = new StringBuilder(); }
+            sb.Append(_dbConfig.GetCreateTableSql(tableName, keyName, fields));
+            return sb.ToString();
+        }
 
         #endregion 结构
 
