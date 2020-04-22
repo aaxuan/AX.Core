@@ -16,10 +16,11 @@ namespace AX.Core.DataBase
         public AXDataBase()
         { }
 
-        public void UseConfig(IDBDialectConfig dBConfig)
+        public AXDataBase UseConfig(IDBDialectConfig dBConfig)
         {
-            _dbConfig = dBConfig;
-            _sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);
+            this._dbConfig = dBConfig;
+            this._sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);
+            return this;
         }
 
         public string NewId

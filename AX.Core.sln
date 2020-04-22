@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AX.Core", "AX.Core\AX.Core.csproj", "{202FB625-3370-4F0C-A7AF-EFF3FAF2C518}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCoreUseDemo", "NetCoreUseDemo\NetCoreUseDemo.csproj", "{195B881B-958A-4B36-A3DF-0A5D302F4E5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCoreUseDemo", "NetCoreUseDemo\NetCoreUseDemo.csproj", "{195B881B-958A-4B36-A3DF-0A5D302F4E5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
