@@ -11,7 +11,11 @@ namespace AX.Framework.Net
     {
         static Http()
         {
-            ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.CheckCertificateRevocationList = false;
+            ServicePointManager.DefaultConnectionLimit = 1024;
+            ServicePointManager.Expect100Continue = false;
         }
 
         /// <summary>
@@ -59,123 +63,16 @@ namespace AX.Framework.Net
             return result;
         }
 
-        public static string PostJsonData(string url, string datavalue)
+        public static string PostJson(string url, string content, Encoding encoding = null)
         {
-            var req = (HttpWebRequest)WebRequest.Create(url);
-            req.Method = "POST";
-            req.ContentType = "application/json";
-            var dataByte = Encoding.UTF8.GetBytes(datavalue);
-            req.ContentLength = dataByte.Length;
+            if (encoding == null)
+            { encoding = Encoding.UTF8; }
 
-            using (var reqStream = req.GetRequestStream())
-            {
-                reqStream.Write(dataByte, 0, dataByte.Length);
-                reqStream.Close();
-            }
-
-            var resp = (HttpWebResponse)req.GetResponse();
-            var stream = resp.GetResponseStream();
-            //获取响应内容
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                var result = reader.ReadToEnd();
-                return result;
-            }
-        }
-
-        //public static MemoryStream DownloadData(string url)
-        //{
-        //    using (WebClient client = new WebClient())
-        //    {
-        //        MemoryStream ms = new MemoryStream(client.DownloadData(url));
-        //        return ms;
-        //    }
-        //}
-
-        //public static string Post(string url, Dictionary<string, string> dic)
-        //{
-        //    HttpWebRequest request = null;
-        //    request = WebRequest.Create(url) as HttpWebRequest;
-        //    request.ProtocolVersion = HttpVersion.Version10;
-        //    request.Method = "POST";
-        //    request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
-        //    //POST参数拼接
-        //    if (!(dic == null || dic.Count == 0))
-        //    {
-        //        StringBuilder buffer = new StringBuilder();
-        //        int i = 0;
-        //        foreach (string key in dic.Keys)
-        //        {
-        //            if (i > 0)
-        //            {
-        //                buffer.AppendFormat("&{0}={1}", key, System.Web.HttpUtility.UrlEncode(dic[key]));
-        //            }
-        //            else
-        //            {
-        //                buffer.AppendFormat("{0}={1}", key, System.Web.HttpUtility.UrlEncode(dic[key]));
-        //            }
-        //            i++;
-        //        }
-        //        Console.WriteLine(url.ToString());
-        //        Console.WriteLine(buffer.ToString());
-        //        byte[] data = Encoding.UTF8.GetBytes(buffer.ToString());
-        //        using (Stream stream = request.GetRequestStream())
-        //        {
-        //            stream.Write(data, 0, data.Length);
-        //        }
-        //    }
-        //    try
-        //    {
-        //        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        //        using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-        //        {
-        //            return reader.ReadToEnd();
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
-
-
-        /// <summary>
-        /// http get
-        /// </summary>
-        /// <param name="url"></param>
-        /// <param name="enCode">中文编码问题</param>
-        /// <returns></returns>
-        public static string Get(string url, Encoding enCode = null)
-        {
-            if (enCode == null)
-            { enCode = Encoding.UTF8; }
-
-            string responseStr = string.Empty;
-            WebClient webClient = new WebClient();
-            webClient.Encoding = enCode;
-            var result = webClient.DownloadData(url);
-            webClient.Dispose();
-            responseStr = enCode.GetString(result);//解码
-            return responseStr;
-        }
-
-        /// POST 请求
-        /// </summary>
-        /// <param name="url">地址</param>
-        /// <param name="parameters">查询参数集合</param>
-        /// <returns></returns>
-        public static string Post(string url, string content)
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-            ServicePointManager.CheckCertificateRevocationList = false;
-            ServicePointManager.DefaultConnectionLimit = 1024;
-            ServicePointManager.Expect100Continue = false;
-
-            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            var request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
             request.ContentType = "application/json";
-            byte[] data = Encoding.UTF8.GetBytes(content);
+
+            var data = encoding.GetBytes(content);
             //写入请求流
             using (Stream stream = request.GetRequestStream())
             {
@@ -183,6 +80,48 @@ namespace AX.Framework.Net
             }
             var response = (HttpWebResponse)request.GetResponse() as HttpWebResponse;
             return new StreamReader(response.GetResponseStream()).ReadToEnd();
+        }
+
+        public static string PostForm(string url, Dictionary<string, string> dic, Encoding encoding = null)
+        {
+            if (encoding == null)
+            { encoding = Encoding.UTF8; }
+
+            HttpWebRequest request = null;
+            request = WebRequest.Create(url) as HttpWebRequest;
+            request.ProtocolVersion = HttpVersion.Version10;
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded;charset=UTF-8";
+            //POST参数拼接
+            if (!(dic == null || dic.Count == 0))
+            {
+                StringBuilder buffer = new StringBuilder();
+                int i = 0;
+                foreach (string key in dic.Keys)
+                {
+                    if (i > 0)
+                    {
+                        buffer.AppendFormat("&{0}={1}", key, System.Web.HttpUtility.UrlEncode(dic[key]));
+                    }
+                    else
+                    {
+                        buffer.AppendFormat("{0}={1}", key, System.Web.HttpUtility.UrlEncode(dic[key]));
+                    }
+                    i++;
+                }
+                Console.WriteLine(url.ToString());
+                Console.WriteLine(buffer.ToString());
+                byte[] data = encoding.GetBytes(buffer.ToString());
+                using (Stream stream = request.GetRequestStream())
+                {
+                    stream.Write(data, 0, data.Length);
+                }
+            }
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

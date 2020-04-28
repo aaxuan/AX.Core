@@ -1,7 +1,4 @@
-﻿using System;
-using System.Web;
-
-namespace AX.Framework.Net
+﻿namespace AX.Framework.Net
 {
     public static class BrowserInfo
     {
