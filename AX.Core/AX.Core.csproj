@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <Version>1.0.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +14,6 @@
   <ItemGroup>
     <Folder Include="Encryption\" />
     <Folder Include="Net\" />
-    <Folder Include="Log\" />
   </ItemGroup>
 
 </Project>

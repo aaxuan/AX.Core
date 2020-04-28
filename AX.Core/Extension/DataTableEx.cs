@@ -1,4 +1,4 @@
-﻿using AX.Core.CommonModel;
+﻿using AX.Core.CommonModel.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Data;

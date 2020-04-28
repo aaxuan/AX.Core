@@ -137,5 +137,52 @@ namespace AX.Framework.Net
         //        throw ex;
         //    }
         //}
+
+
+        /// <summary>
+        /// http get
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="enCode">中文编码问题</param>
+        /// <returns></returns>
+        public static string Get(string url, Encoding enCode = null)
+        {
+            if (enCode == null)
+            { enCode = Encoding.UTF8; }
+
+            string responseStr = string.Empty;
+            WebClient webClient = new WebClient();
+            webClient.Encoding = enCode;
+            var result = webClient.DownloadData(url);
+            webClient.Dispose();
+            responseStr = enCode.GetString(result);//解码
+            return responseStr;
+        }
+
+        /// POST 请求
+        /// </summary>
+        /// <param name="url">地址</param>
+        /// <param name="parameters">查询参数集合</param>
+        /// <returns></returns>
+        public static string Post(string url, string content)
+        {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.CheckCertificateRevocationList = false;
+            ServicePointManager.DefaultConnectionLimit = 1024;
+            ServicePointManager.Expect100Continue = false;
+
+            HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            byte[] data = Encoding.UTF8.GetBytes(content);
+            //写入请求流
+            using (Stream stream = request.GetRequestStream())
+            {
+                stream.Write(data, 0, data.Length);
+            }
+            var response = (HttpWebResponse)request.GetResponse() as HttpWebResponse;
+            return new StreamReader(response.GetResponseStream()).ReadToEnd();
+        }
     }
 }

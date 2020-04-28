@@ -1,4 +1,4 @@
-﻿using AX.Core.CommonModel;
+﻿using AX.Core.CommonModel.Exceptions;
 using AX.Core.DataBase.Configs;
 using AX.Core.Extension;
 using System;
@@ -23,7 +23,7 @@ namespace AX.Core.DataBase
             return this;
         }
 
-        public string NewId
+        public string NewGuId
         { get { return Guid.NewGuid().ToString("N"); } }
 
         #region 私有变量/方法
@@ -153,7 +153,7 @@ namespace AX.Core.DataBase
             //自动设置主键
             var key = SchemaManage.GetPrimaryKey<T>();
             if (key.GetValue(entity, null) == null)
-            { key.SetValue(entity, NewId); }
+            { key.SetValue(entity, NewGuId); }
             var sql = _sqlBuilder.BuildInsertSql<T>(SchemaManage.GetTableName<T>());
             var result = ExecuteNonQuery(sql.ToString(), entity);
             return entity;
@@ -329,11 +329,11 @@ namespace AX.Core.DataBase
 
         #region 事务
 
-        public void BeginTransaction()
+        public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
         {
             if (_dbTransaction != null)
             { throw new AXDataBaseException($"已存在事务"); }
-            _dbTransaction = Connection.BeginTransaction();
+            _dbTransaction = Connection.BeginTransaction(isolationLevel);
         }
 
         public void CompleteTransaction()

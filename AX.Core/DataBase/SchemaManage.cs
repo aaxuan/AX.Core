@@ -1,4 +1,5 @@
 ﻿using AX.Core.CommonModel;
+using AX.Core.CommonModel.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
