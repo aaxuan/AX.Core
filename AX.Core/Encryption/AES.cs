@@ -1,4 +1,4 @@
-﻿namespace AX.Framework.Encryption
+﻿namespace AX.Core.Encryption
 {
     public static class AES
     {

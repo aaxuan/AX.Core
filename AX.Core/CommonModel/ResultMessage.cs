@@ -8,13 +8,15 @@ namespace AX.Core.CommonModel
     public class ResultMessage
     {
         public ResultMessage()
-        { }
+        { ResultTime = DateTime.Now; }
 
-        public ResultMessage(int code)
+        public ResultMessage(int code) : this()
         { Code = code; }
 
         public ResultMessage(int code, string message) : this(code)
         { Message = message; }
+
+        public DateTime ResultTime { get; set; }
 
         public int Code { get; set; }
 
@@ -27,7 +29,7 @@ namespace AX.Core.CommonModel
     /// <typeparam name="T"></typeparam>
     public class ResultMessage<T> : ResultMessage
     {
-        public ResultMessage()
+        public ResultMessage() : base()
         { }
 
         public ResultMessage(T data) : base(200, "请求成功")
@@ -41,7 +43,7 @@ namespace AX.Core.CommonModel
     /// </summary>
     public class RedirectResultMessage : ResultMessage
     {
-        public RedirectResultMessage()
+        public RedirectResultMessage() : base()
         {
             Code = 302;
         }

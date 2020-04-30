@@ -3,7 +3,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace AX.Framework.Encryption
+namespace AX.Core.Encryption
 {
     public static class SHA256
     {

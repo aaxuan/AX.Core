@@ -2,7 +2,7 @@
 using System;
 using System.Text;
 
-namespace AX.Framework.Encryption
+namespace AX.Core.Encryption
 {
     public static class Base64
     {

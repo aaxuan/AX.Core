@@ -2,7 +2,7 @@
 using System.Net.Mail;
 using System.Text;
 
-namespace AX.Framework.Net
+namespace AX.Core.Net
 {
     public class Mail
     {

@@ -1,4 +1,4 @@
-﻿namespace AX.Framework.Net
+﻿namespace AX.Core.Net
 {
     public static class BrowserInfo
     {

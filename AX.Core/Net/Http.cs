@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 
-namespace AX.Framework.Net
+namespace AX.Core.Net
 {
     public static class Http
     {

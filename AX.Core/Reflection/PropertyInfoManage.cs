@@ -15,7 +15,9 @@ namespace AX.Core.Reflection
         public static int GetMaxStringLength(PropertyInfo field)
         {
             var att = field.GetCustomAttribute<StringLengthAttribute>(false);
-            return att.MaximumLength;
+            if (att != null)
+            { return att.MaximumLength; }
+            return 0;
         }
 
         /// <summary>
