@@ -36,6 +36,9 @@ namespace AX.Core.DataBase
 
         private void TryOpenConn()
         {
+            if (Connection == null)
+            { throw new AXDataBaseException("链接对象为空"); }
+
             if (Connection.State != ConnectionState.Open)
             { Connection.Open(); }
         }
