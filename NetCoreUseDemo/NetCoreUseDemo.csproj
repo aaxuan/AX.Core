@@ -13,4 +13,10 @@
     <ProjectReference Include="..\AX.Core\AX.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="jsonConfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

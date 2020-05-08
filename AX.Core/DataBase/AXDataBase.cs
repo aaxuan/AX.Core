@@ -233,7 +233,7 @@ namespace AX.Core.DataBase
 
         #region 查询
 
-        public bool IsExists<T>(object id)
+        public Boolean IsExists<T>(object id)
         {
             if (id == null)
             { return false; }
@@ -244,6 +244,13 @@ namespace AX.Core.DataBase
             {
                 return true;
             }
+            return false;
+        }
+
+        public Boolean IsExists<T>(string sql, params object[] args)
+        {
+            if (GetCount<T>(sql, args) > 0)
+            { return true; }
             return false;
         }
 
@@ -361,7 +368,7 @@ namespace AX.Core.DataBase
 
         #region 结构
 
-        public String SetSchema<T>(bool execute)
+        public String SetSchema<T>(Boolean execute)
         {
             var result = new StringBuilder();
             var dbName = Connection.Database;

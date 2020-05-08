@@ -5,6 +5,11 @@ namespace NetCoreUseDemo
 {
     public class DB : AX.Core.DataBase.AXDataBase
     {
+        public DB()
+        {
+            this.UseConfig(new AX.Core.DataBase.Configs.MySqlDialectConfig());
+        }
+
         private DbConnection _connection;
 
         public override DbConnection Connection
@@ -18,6 +23,6 @@ namespace NetCoreUseDemo
             }
         }
 
-        public override DbProviderFactory Factory { get { return new MySql.Data.MySqlClient.MySqlClientFactory(); } }
+        public override DbProviderFactory Factory { get { return new MySqlClientFactory(); } }
     }
 }
