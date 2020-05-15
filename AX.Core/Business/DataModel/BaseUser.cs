@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AX.Core.Business.DataModel
 {
     /// <summary>
-    /// 用户属性最简接口
+    /// 用户属性最简基类
     /// </summary>
     [Table("base_user")]
     public abstract class BaseUser

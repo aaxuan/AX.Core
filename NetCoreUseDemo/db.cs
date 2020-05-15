@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace NetCoreUseDemo
 {
-    public class DB : AX.Core.DataBase.AXDataBase
+    public class DB : AX.Core.DataBase.DataRepository
     {
         public DB()
         {

@@ -11,12 +11,12 @@ using System.Text.RegularExpressions;
 
 namespace AX.Core.DataBase
 {
-    public abstract class AXDataBase
+    public abstract class DataRepository
     {
-        public AXDataBase()
+        public DataRepository()
         { }
 
-        public AXDataBase UseConfig(IDBDialectConfig dBConfig)
+        public DataRepository UseConfig(IDBDialectConfig dBConfig)
         {
             this._dbConfig = dBConfig;
             this._sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);

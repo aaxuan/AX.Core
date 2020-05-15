@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace AX.Core.DataBase.SchemlModel
+namespace AX.Core.DataBase.Scheml
 {
-    public class SchemlDB
+    public class SchemaDB
     {
-        public SchemlDB()
+        public SchemaDB()
         {
-            Tables = new List<SchemlTable>();
+            Tables = new List<SchemaTable>();
         }
 
         [DisplayName("代码名称")]
@@ -20,6 +20,6 @@ namespace AX.Core.DataBase.SchemlModel
         public string Description { get; set; }
 
         [DisplayName("包含表")]
-        public List<SchemlTable> Tables { get; set; }
+        public List<SchemaTable> Tables { get; set; }
     }
 }

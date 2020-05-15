@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 
-namespace AX.Core.DataBase
+namespace AX.Core.DataBase.Scheml
 {
-    public static class SchemaManage
+    public static class SchemaProvider
     {
         /// <summary>
         /// 获取实体表名称

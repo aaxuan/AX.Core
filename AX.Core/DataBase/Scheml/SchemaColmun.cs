@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace AX.Core.DataBase.SchemlModel
+namespace AX.Core.DataBase.Scheml
 {
-    public class SchemlColmun
+    public class SchemaColmun
     {
         [DisplayName("代码名称")]
         public string CodeName { get; set; }

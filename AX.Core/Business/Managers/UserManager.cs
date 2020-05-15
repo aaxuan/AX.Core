@@ -11,7 +11,7 @@ namespace AX.Core.Business.Managers
     /// </summary>
     public class BaseUserManager
     {
-        public virtual AXDataBase DB { get; set; }
+        public virtual DataRepository DB { get; set; }
 
         public virtual BaseUser CheckUserLogin(string loginName, string password)
         {
