@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 namespace AX.Core.DataBase.Scheml
 {
-    public class SchemlTable
+    public class SchemaTable
     {
-        public SchemlTable()
+        public SchemaTable()
         {
             Colmuns = new List<SchemaColmun>();
         }

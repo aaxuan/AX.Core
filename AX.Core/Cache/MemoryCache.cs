@@ -1,4 +1,5 @@
 ﻿using AX.Core.Extension;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,6 @@ namespace AX.Core.Cache
         /// </summary>
         private ConcurrentDictionary<string, T> _dict { get; set; } = new ConcurrentDictionary<string, T>();
 
-        public MemoryCache()
-        { }
-
         public MemoryCache(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -26,7 +24,10 @@ namespace AX.Core.Cache
                 Name = typeof(T).FullName;
             }
             Name = name;
+            this.CreateTime = DateTime.Now;
         }
+
+        #region 属性
 
         /// <summary>
         /// 缓存名称
@@ -37,6 +38,33 @@ namespace AX.Core.Cache
         /// 缓存数量
         /// </summary>
         public int Count { get { return _dict.Count; } }
+
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public DateTime CreateTime { get; private set; }
+
+        #endregion 属性
+
+        /// <summary>
+        /// 索引器
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public T this[string key]
+        {
+            //实现索引器的get方法
+            get
+            {
+                return _dict[key];
+            }
+
+            //实现索引器的set方法
+            set
+            {
+                _dict[key] = value;
+            }
+        }
 
         /// <summary>
         /// 添加缓存
@@ -130,7 +158,7 @@ namespace AX.Core.Cache
         /// 获取全部缓存值
         /// </summary>
         /// <returns></returns>
-        public List<T> ToList()
+        public List<T> AllToList()
         {
             return _dict.Values.ToList();
         }

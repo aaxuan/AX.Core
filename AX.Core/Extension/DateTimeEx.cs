@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace AX.Core.Extension
 {
@@ -36,6 +37,36 @@ namespace AX.Core.Extension
                 case EnumFormatMode.yyyy年MM月dd日HH时mm分ss秒: return date.ToString("yyyy年MM月dd日HH时mm分ss秒");
                 default: return date.ToString();
             }
+        }
+
+        /// <summary>返回当前日期的星期名称</summary>
+        /// <param name="dt">日期</param>
+        /// <returns>星期名称</returns>
+        public static string GetChinessWeekName(this DateTime date)
+        {
+            string week = string.Empty;
+            switch (date.DayOfWeek)
+            {
+                case DayOfWeek.Monday: return "星期一";
+                case DayOfWeek.Tuesday: return "星期二";
+                case DayOfWeek.Wednesday: return "星期三";
+                case DayOfWeek.Thursday: return "星期四";
+                case DayOfWeek.Friday: return "星期五";
+                case DayOfWeek.Saturday: return "星期六";
+                case DayOfWeek.Sunday: return "星期日";
+            }
+            return week;
+        }
+
+        /// <summary>
+        /// 获取某一日期是该年中的第几周
+        /// </summary>
+        /// <param name="dt">日期</param>
+        /// <returns>该日期在该年中的周数</returns>
+        public static int GetWeekOfYear(this DateTime date)
+        {
+            var gc = new GregorianCalendar();
+            return gc.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Monday);
         }
 
         /// <summary>
