@@ -1,5 +1,5 @@
 ﻿using AX.Core.Extension;
-using System;
+using System.Collections.Generic;
 
 namespace AX.Core.Cache
 {
@@ -8,26 +8,29 @@ namespace AX.Core.Cache
     /// </summary>
     public static class CacheFactory
     {
-        private static MemoryCache<Object> _allCacheDict;
+        /// <summary>
+        /// 所有缓存
+        /// </summary>
+        private static MemoryCache<ICaChe> _allCacheDict { get; set; } = new MemoryCache<ICaChe>("全局缓存管理对象");
 
-        static CacheFactory()
+        /// <summary>
+        /// 创建并注册缓存对象
+        /// </summary>
+        /// <param name="cacheName"></param>
+        public static MemoryCache<T> CreateCache<T>(string cacheName)
         {
-            _allCacheDict = new MemoryCache<Object>("全局缓存管理对象");
+            cacheName.CheckIsNullOrWhiteSpace();
+            var cache = new MemoryCache<T>(cacheName);
+            _allCacheDict[cacheName] = cache;
+            return cache;
         }
 
         /// <summary>
         /// 获取缓存对象
         /// </summary>
         /// <param name="cacheName"></param>
-        public static Object CreateCache(string cacheName)
-        {
-            cacheName.CheckIsNullOrWhiteSpace();
-            var cache = new MemoryCache<Object>(cacheName);
-            _allCacheDict[cacheName] = cache;
-            return cache;
-        }
-
-        public static Object GetCache(string cacheName)
+        /// <returns></returns>
+        public static ICaChe GetCache(string cacheName)
         {
             cacheName.CheckIsNullOrWhiteSpace();
             if (_allCacheDict.ContainsKey(cacheName))
@@ -35,6 +38,15 @@ namespace AX.Core.Cache
                 return _allCacheDict[cacheName];
             }
             return null;
+        }
+
+        /// <summary>
+        /// 获取全局所有缓存情况
+        /// </summary>
+        /// <returns></returns>
+        public static List<ICaChe> GetCaCheList()
+        {
+            return _allCacheDict.AllToList();
         }
     }
 }

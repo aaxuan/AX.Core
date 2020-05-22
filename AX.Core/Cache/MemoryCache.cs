@@ -10,12 +10,12 @@ namespace AX.Core.Cache
     /// 内存缓存实现类
     /// </summary>
     /// <typeparam name="T">缓存类型</typeparam>
-    public class MemoryCache<T>
+    public class MemoryCache<T> : ICaChe
     {
         /// <summary>
         /// 内存数据
         /// </summary>
-        private ConcurrentDictionary<string, T> _dict { get; set; } = new ConcurrentDictionary<string, T>();
+        private ConcurrentDictionary<string, T> _dataDict { get; set; } = new ConcurrentDictionary<string, T>();
 
         public MemoryCache(string name)
         {
@@ -29,20 +29,13 @@ namespace AX.Core.Cache
 
         #region 属性
 
-        /// <summary>
-        /// 缓存名称
-        /// </summary>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        /// <summary>
-        /// 缓存数量
-        /// </summary>
-        public int Count { get { return _dict.Count; } }
+        public int Count { get { return _dataDict.Count; } }
 
-        /// <summary>
-        /// 创建时间
-        /// </summary>
         public DateTime CreateTime { get; private set; }
+
+        public String CaCheValueTypeName { get { return typeof(T).FullName; } }
 
         #endregion 属性
 
@@ -56,13 +49,13 @@ namespace AX.Core.Cache
             //实现索引器的get方法
             get
             {
-                return _dict[key];
+                return _dataDict[key];
             }
 
             //实现索引器的set方法
             set
             {
-                _dict[key] = value;
+                _dataDict[key] = value;
             }
         }
 
@@ -75,7 +68,7 @@ namespace AX.Core.Cache
         public bool Add(string key, T value)
         {
             key.CheckIsNullOrWhiteSpace();
-            _dict[key] = value;
+            _dataDict[key] = value;
             return true;
         }
 
@@ -99,7 +92,7 @@ namespace AX.Core.Cache
         /// <returns></returns>
         public bool Clear()
         {
-            _dict.Clear();
+            _dataDict.Clear();
             return true;
         }
 
@@ -110,9 +103,9 @@ namespace AX.Core.Cache
         /// <returns></returns>
         public T Get(string key)
         {
-            if (_dict.ContainsKey(key))
+            if (_dataDict.ContainsKey(key))
             {
-                return _dict[key];
+                return _dataDict[key];
             }
             return default(T);
         }
@@ -140,7 +133,7 @@ namespace AX.Core.Cache
         public bool Remove(string key)
         {
             var obj = default(T);
-            _dict.TryRemove(key, out obj);
+            _dataDict.TryRemove(key, out obj);
             return true;
         }
 
@@ -151,7 +144,7 @@ namespace AX.Core.Cache
         /// <returns></returns>
         public bool ContainsKey(string key)
         {
-            return _dict.ContainsKey(key);
+            return _dataDict.ContainsKey(key);
         }
 
         /// <summary>
@@ -160,7 +153,7 @@ namespace AX.Core.Cache
         /// <returns></returns>
         public List<T> AllToList()
         {
-            return _dict.Values.ToList();
+            return _dataDict.Values.ToList();
         }
     }
 }

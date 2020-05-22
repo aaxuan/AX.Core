@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace AX.Core.DataBase.Scheml
+namespace AX.Core.DataBase.Schema
 {
     public class SchemaTable
     {

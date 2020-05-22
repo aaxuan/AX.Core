@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace AX.Core.DataBase.Scheml
+namespace AX.Core.DataBase.Schema
 {
     public class SchemaDB
     {
@@ -21,5 +21,11 @@ namespace AX.Core.DataBase.Scheml
 
         [DisplayName("包含表")]
         public List<SchemaTable> Tables { get; set; }
+
+        [DisplayName("数据库连接串")]
+        public string ConnectionString { get; set; }
+
+        [DisplayName("数据库类型")]
+        public DataBaseType DBType { get; set; }
     }
 }

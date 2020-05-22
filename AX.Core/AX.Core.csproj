@@ -18,7 +18,6 @@
   <ItemGroup>
     <Folder Include="Encryption\" />
     <Folder Include="Net\" />
-    <Folder Include="RunLog\" />
   </ItemGroup>
 
 </Project>

@@ -12,8 +12,10 @@ namespace AX.Core.Business.DataModel
 
         public string Content { get; set; }
 
-        public string TypeName { get; set; }
-
         public DateTime DateTime { get; set; }
+
+        public String UserId { get; set; }
+
+        public String UserName { get; set; }
     }
 }

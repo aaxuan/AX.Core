@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AX.Core.DataBase.Schema;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -155,7 +156,7 @@ namespace AX.Core.DataBase
         {
             StringBuilder sb = new StringBuilder();
             var setValues = GetEqualConditions(updateFields);
-            var whereProp = GetEqualConditions(SchemaManage.GetPrimaryKey<T>().Name);
+            var whereProp = GetEqualConditions(SchemaProvider.GetPrimaryKey<T>().Name);
             sb.AppendFormat("UPDATE {0} SET {1} WHERE {2} ", tableName, string.Join(",", setValues), string.Join(" AND ", whereProp));
             return sb;
         }
@@ -179,7 +180,7 @@ namespace AX.Core.DataBase
         public StringBuilder BuildDeleteByIdSql<T>(string tableName)
         {
             var sb = BuildDeleteTableSql(tableName);
-            sb.AppendFormat(" AND {0} ", GetEqualConditions(SchemaManage.GetPrimaryKey<T>().Name).First());
+            sb.AppendFormat(" AND {0} ", GetEqualConditions(SchemaProvider.GetPrimaryKey<T>().Name).First());
             return sb;
         }
 

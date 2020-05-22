@@ -1,13 +1,21 @@
-﻿using AX.Core.CommonModel.Exceptions;
+﻿using AX.Core.Cache;
+using AX.Core.CommonModel.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 
-namespace AX.Core.DataBase.Scheml
+namespace AX.Core.DataBase.Schema
 {
     public static class SchemaProvider
     {
+        private static readonly MemoryCache<string> _tableNameCache;
+
+        static SchemaProvider()
+        {
+            _tableNameCache = CacheFactory.CreateCache<string>("数据实体类表名缓存") as MemoryCache<string>;
+        }
+
         /// <summary>
         /// 获取实体表名称
         /// 尝试 System.ComponentModel.DataAnnotations.Schema.TableAttribute 特性
@@ -18,14 +26,23 @@ namespace AX.Core.DataBase.Scheml
         public static string GetTableName<T>()
         {
             var result = string.Empty;
-            var tableattr = typeof(T)
-            .GetCustomAttributes(true)
-            .SingleOrDefault(attr => attr.GetType().Name == typeof(TableAttribute).Name) as TableAttribute;
+            var typeFullName = typeof(T).FullName;
 
-            if (tableattr != null)
-            { return tableattr.Name; }
+            if (_tableNameCache.ContainsKey(typeFullName))
+            { return _tableNameCache[typeFullName]; }
+            else
+            {
+                var tableattr = typeof(T)
+.GetCustomAttributes(true)
+.SingleOrDefault(attr => attr.GetType().Name == typeof(TableAttribute).Name) as TableAttribute;
 
-            return typeof(T).Name;
+                if (tableattr != null)
+                { _tableNameCache[typeFullName] = tableattr.Name; }
+                else
+                { _tableNameCache[typeFullName] = typeof(T).Name; }
+
+                return _tableNameCache[typeFullName];
+            }
         }
 
         /// <summary>

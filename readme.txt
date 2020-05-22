@@ -1,9 +1,22 @@
-���� .Net standard 2.0.3 ��ͨ�û������
+﻿基于 .Net standard 2.0.3 的通用基础类库
 
-ʹ�ñ������һ��ʹ��ȫ���쳣���أ����������м��� try��������������Ϸ������������ֱ���׳��쳣��
-�ɶ��쳣���ͽ����ж����Ʊ�����쳣�׳���
+⚠ 使用本类库请一定使用全局异常拦截，基础代码中极少 try，大多数参数不合法和意外情况会直接抛出异常。
+可对异常类型进行判断限制本类库异常抛出。
 
-������ System.ComponentModel.Annotations 4.7.0
-������ Newtonsoft.Json 12.0.3
+依赖包 System.ComponentModel.Annotations 4.7.0
+依赖包 Newtonsoft.Json 12.0.3
 
-��ʹ�� ���������߼��� user����������޶�Ϊ��base_user��
+若使用 核心内置逻辑层 user基类表命名限定为【base_user】
+
+= Business
+√ Cache 提供了统一管理全局内存缓存的能力。可以显示缓存注册名称，类型，创建时间，数量。
+= CommonModel
+= Config
+= DataBase
+= Encryption
+= Extension
+= Helper
+= Net
+= Reflection
+= RunLog 
+

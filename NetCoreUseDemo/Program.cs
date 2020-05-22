@@ -1,5 +1,6 @@
 ﻿using AX.Core.Business.DataModel;
-using NetCoreUseDemo;
+using AX.Core.DataBase;
+using MySql.Data.MySqlClient;
 using System;
 
 namespace NetCoreUseDemo
@@ -23,47 +24,53 @@ namespace NetCoreUseDemo
     {
         public String LastLoginTime { get; set; }
     }
-}
 
-internal class Program
-{
-    private static void Main(string[] args)
+    internal class Program
     {
-        //var db = new DB();
-        //db.UseConfig(new AX.Core.DataBase.Configs.MySqlDialectConfig());
+        private static DataRepository GetDataBase(AX.Core.DataBase.Schema.SchemaDB schemaDB)
+        {
+            return new DataRepository(new MySqlConnection(schemaDB.ConnectionString));
+        }
 
-        //db.SetSchema<DemoTable>(true);
-        //var guid = db.NewGuId;
-        //var model = db.Insert<DemoTable>(new DemoTable() { Id = guid, CreateTime = DateTime.Now, isuse = true, money = 98.8M });
-        //model.CreateTime2 = DateTime.Now;
-        //model.money2 = 100.02M;
-        //db.Update<DemoTable>(model);
+        private static void Main(string[] args)
+        {
+            DBFactory.SetDB(DBFactory.DefaultDBKey, "server=localhost;userid=root;pwd=123qwe;database=test;sslmode=none;", DataBaseType.MySql);
+            DBFactory.GetDataRepositoryFunc = GetDataBase;
+            var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
 
-        //AX.Core.Business.Managers.BaseUserManager userManager = new AX.Core.Business.Managers.BaseUserManager();
-        //userManager.DB = db;
-        //db.Insert<User>(new User() { NickName = "123qwe", LoginName = "asd", Password = "asd" });
-        //userManager.New(new User() { NickName = "123qwe", LoginName = "asd", Password = "asd" });
+            db.SetSchema<DemoTable>(true);
+            var model = db.Insert<DemoTable>(new DemoTable() { CreateTime = DateTime.Now, isuse = true, money = 98.8M });
+            model.CreateTime2 = DateTime.Now;
+            model.money2 = 100.02M;
+            db.Update<DemoTable>(model);
 
-        //var jsonconfi = new AX.Core.Config.JsonConfig("jsonConfig.json");
-        //var x = jsonconfi.GetValue<string>("xxx");
-        //var f = jsonconfi.GetValue<System.Collections.Generic.List<int>>("fff");
-        //object c = jsonconfi.GetValue<object>("ccc");
+            //AX.Core.Business.Managers.BaseUserManager userManager = new AX.Core.Business.Managers.BaseUserManager();
+            //userManager.DB = db;
+            //db.Insert<User>(new User() { NickName = "123qwe", LoginName = "asd", Password = "asd" });
+            //userManager.New(new User() { NickName = "123qwe", LoginName = "asd", Password = "asd" });
 
-        //百度坐标点 [113.312187194824,23.1383113861084]
-        //高德坐标点 [113.305722,23.132239]
-        116.473207,39.993202
+            //var jsonconfi = new AX.Core.Config.JsonConfig("jsonConfig.json");
+            //var x = jsonconfi.GetValue<string>("xxx");
+            //var f = jsonconfi.GetValue<System.Collections.Generic.List<int>>("fff");
+            //object c = jsonconfi.GetValue<object>("ccc");
 
-        //我计算的高德坐标点 [113.305722,23.132239]
+            //百度坐标点 [113.312187194824,23.1383113861084]
+            //高德坐标点 [113.305722,23.132239]
+            //116.473207,39.993202
 
-        var b = AX.Core.Helper.GPS.bd09_To_Gcj02(, );
+            //我计算的高德坐标点 [113.305722,23.132239]
 
-        //
-        //
+            //var b = AX.Core.Helper.GPS.bd09_To_Gcj02(, );
 
-        Console.WriteLine(b[0]);
-        Console.WriteLine(b[1]);
+            //
+            //
 
+            //Console.WriteLine(b[0]);
+            //Console.WriteLine(b[1]);
 
-        var m = 1 + 1;
+            //server=localhost;userid=root;pwd=123qwe;database=test;sslmode=none;
+
+            var m = 1 + 1;
+        }
     }
 }

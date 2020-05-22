@@ -79,5 +79,59 @@ namespace AX.Core.DataBase.Configs
 
             return "未匹配类型";
         }
+
+        //public List<string> LoadDB()
+        //{
+        //    var result = new List<string>();
+        //    var allDB = new DataTable();
+        //    allDB.Load(ConnForm.Connection.ExecuteReader("SHOW DATABASES"));
+        //    foreach (DataRow row in allDB.Rows)
+        //    {
+        //        result.Add(row[0].ToString());
+        //    }
+        //    return result;
+        //}
+
+        ///// <summary>
+        ///// 表名称
+        ///// </summary>
+        ///// <param name="dbName"></param>
+        //public void GetDBScheml(List<string> dbNames)
+        //{
+        //    foreach (var dbName in dbNames)
+        //    {
+        //        // 添加库
+        //        var db = new DataModel.SchemlDB() { CodeName = dbName, DisplayName = dbName, Description = dbName };
+
+        //        var tablesql = $"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '{dbName}'";
+        //        var dbTables = new DataTable();
+        //        dbTables.Load(ConnForm.Connection.ExecuteReader(tablesql));
+
+        //        foreach (DataRow tableRow in dbTables.Rows)
+        //        {
+        //            // 添加表
+        //            var dt = new DataModel.SchemlTable() { CodeName = tableRow["TABLE_NAME"].ToString(), DisplayName = tableRow["TABLE_NAME"].ToString(), Description = tableRow["TABLE_COMMENT"].ToString() };
+        //            db.Tables.Add(dt);
+        //            var columnsql = $"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '{dbName}' AND TABLE_NAME = '{tableRow["TABLE_NAME"].ToString()}'";
+        //            var dbcolumns = new DataTable();
+        //            dbcolumns.Load(ConnForm.Connection.ExecuteReader(columnsql));
+
+        //            foreach (DataRow columnRow in dbcolumns.Rows)
+        //            {
+        //                //添加字段
+        //                var col = new DataModel.SchemlColmun();
+        //                dt.Colmuns.Add(col);
+        //                col.CodeName = columnRow["COLUMN_NAME"].ToString();
+        //                col.DefaultValue = columnRow["COLUMN_DEFAULT"].ToString();
+        //                col.CanNullable = columnRow["IS_NULLABLE"].ToString() == "YES" ? true : false;
+        //                col.IsPrimaryKey = columnRow["COLUMN_KEY"].ToString() == "PRI" ? true : false;
+        //                col.DisplayName = col.Description = columnRow["COLUMN_COMMENT"].ToString();
+        //                col.DBType = columnRow["DATA_TYPE"].ToString();
+        //                col.Order = int.Parse(columnRow["ORDINAL_POSITION"].ToString());
+        //            }
+        //        }
+        //        MainForm.SchemlDBs.Add(db);
+        //    }
+        //}
     }
 }

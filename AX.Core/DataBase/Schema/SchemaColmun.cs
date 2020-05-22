@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace AX.Core.DataBase.Scheml
+namespace AX.Core.DataBase.Schema
 {
     public class SchemaColmun
     {
