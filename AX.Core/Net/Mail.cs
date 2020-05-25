@@ -6,27 +6,23 @@ namespace AX.Core.Net
 {
     public class Mail
     {
-        public SmtpClient _client
+        private readonly SmtpClient _client;
+        private readonly string _fromName;
+        private readonly string _formAddress;
+
+        public Mail(string formAddress, string authCode, string fromName)
         {
-            get
-            {
-                SmtpClient client = new SmtpClient();
-                client.Host = "smtp.qq.com";
-                client.Port = 25;
-                client.EnableSsl = true;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(_formAddress, _authCode);
-                return client;
-            }
+            _client = new SmtpClient();
+            _client.Host = "smtp.qq.com";
+            _client.Port = 25;
+            _client.EnableSsl = true;
+            _client.UseDefaultCredentials = false;
+            _client.Credentials = new NetworkCredential(formAddress, authCode);
+            _formAddress = formAddress;
+            _fromName = fromName;
         }
 
-        public string _formAddress { get; set; } = "";
-
-        public string _fromName { get; set; } = "";
-
-        public string _authCode { get; set; } = "";
-
-        public void Send(string toAddress, string subject, string body)
+        public void Send(string toAddress, string subject, string body, bool isHtml = true)
         {
             var message = new MailMessage();
             message.SubjectEncoding = Encoding.UTF8;
@@ -39,7 +35,7 @@ namespace AX.Core.Net
             message.To.Add(toAddress);
             message.Subject = subject;
             message.Body = body;
-            message.IsBodyHtml = true;
+            message.IsBodyHtml = isHtml;
 
             //发送
             _client.Send(message);

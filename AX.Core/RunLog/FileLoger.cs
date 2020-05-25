@@ -5,39 +5,30 @@ namespace AX.Core.RunLog
 {
     public class FileLoger : BaseLoger
     {
-        public void WriteLog(string msg)
+        public void WriteFileLog(string msg)
         {
-            if (!Directory.Exists(LogPath))
-            { Directory.CreateDirectory(LogPath); }
+            var logPath = LogDirectoryPath + "\\" + $"log_{DateTime.Now.ToString("yyyy-mm-dd")}.log";
 
-            string fileNamePath = "log_" + DateTime.Now.ToString("yyyy-MM-dd") + ".log";
-            fileNamePath = LogPath + "\\" + fileNamePath;
-
-            FileStream fileStream;
-            if (File.Exists(fileNamePath))
-            { fileStream = new FileStream(fileNamePath, FileMode.Append, FileAccess.Write); }
-            else
-            { fileStream = new FileStream(fileNamePath, FileMode.Create, FileAccess.Write); }
-            StreamWriter sw;
-            sw = new StreamWriter(fileStream);
+            StreamWriter sw = new StreamWriter(logPath, true);
             sw.WriteLine(CreateLogMsg(msg));
             sw.Close();
-            fileStream.Close();
         }
 
-        public FileLoger(string logpath)
+        /// <summary>
+        /// 实例化 文件日志记录
+        /// 路径不传则取当前目录
+        /// </summary>
+        /// <param name="logDirectoryPath"></param>
+        public FileLoger(string logDirectoryPath = null)
         {
-            //Msgs = new Queue<string>();
-            //if (string.IsNullOrWhiteSpace(logpath))
-            //{
-            //}
-            //else
-            //{
-            //    if (Directory.Exists(logpath) == false)
-            //    { Directory.CreateDirectory(logpath); }
-            //    string sFileName = "log_" + DateTime.Now.ToString("yyyy-MM-dd") + ".log";
-            //}
-            LogPath = logpath;
+            //AppDomain.CurrentDomain.BaseDirectory  D:\MyProject\AX.Core\NetCoreUseDemo\bin\Debug\netcoreapp3.1\
+            if (string.IsNullOrWhiteSpace(logDirectoryPath))
+            { logDirectoryPath = AppDomain.CurrentDomain.BaseDirectory + "log"; }
+
+            if (Directory.Exists(logDirectoryPath) == false)
+            { Directory.CreateDirectory(logDirectoryPath); }
+
+            LogDirectoryPath = logDirectoryPath;
         }
 
         ///// <summary>
@@ -48,7 +39,7 @@ namespace AX.Core.RunLog
         /// <summary>
         /// 日志文件路径
         /// </summary>
-        private string LogPath;
+        private string LogDirectoryPath;
 
         ///// <summary>
         ///// 日志写入线程的控制标记
@@ -144,27 +135,27 @@ namespace AX.Core.RunLog
 
         public override void Info(string msg)
         {
-            WriteLog(msg);
+            WriteFileLog("[信息] " + msg);
         }
 
         public override void Err(string msg)
         {
-            WriteLog(msg);
+            WriteFileLog("[异常] " + msg);
         }
 
         public override void Waring(string msg)
         {
-            WriteLog(msg);
+            WriteFileLog("[警告] " + msg);
         }
 
         public override void Line()
         {
-            WriteLog($"---------- ---------- ---------- ---------- ---------- ----------");
+            WriteFileLog($"---------- ---------- ---------- ---------- ---------- ----------");
         }
 
         public override void EmptyLine()
         {
-            WriteLog(string.Empty);
+            WriteFileLog(string.Empty);
         }
     }
 }

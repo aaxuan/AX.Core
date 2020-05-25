@@ -341,6 +341,14 @@ namespace AX.Core.DataBase
             return table.ToList<T>().FirstOrDefault();
         }
 
+        public T CheckById<T>(object id)
+        {
+            var result = FirstOrDefaultById<T>(id);
+            if (result == null)
+            { throw new AXWarringMesssageException($"数据已过期或不存在 {typeof(T).Name}.{id}"); }
+            return result;
+        }
+
         #endregion 查询
 
         #region 事务
