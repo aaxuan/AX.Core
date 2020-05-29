@@ -7,7 +7,12 @@ namespace AX.Core.Business.Managers
     public class AuthLogic : BaseLogic
     {
         public static Func<Base_User> GetCurrentUserFunc;
+        public static Action SetUserToken;
+        public static Action ClearUserToken;
 
+        /// <summary>
+        /// 当前环境用户是否登录
+        /// </summary>
         public static bool IsLogin
         {
             get
@@ -19,12 +24,22 @@ namespace AX.Core.Business.Managers
             }
         }
 
+        /// <summary>
+        /// 获取当前用户
+        /// </summary>
+        /// <returns></returns>
         public static Base_User GetCurrentUser()
         {
             return GetCurrentUserFunc();
         }
 
-        public Base_User CheckLoginIn(string loginName, string passWord)
+        /// <summary>
+        /// 检查登录
+        /// </summary>
+        /// <param name="loginName"></param>
+        /// <param name="passWord"></param>
+        /// <returns></returns>
+        public Base_User LoginIn(string loginName, string passWord)
         {
             if (string.IsNullOrWhiteSpace(loginName) || string.IsNullOrWhiteSpace(passWord))
             { throw new AXWarringMesssageException("登录名和密码不能为空"); }
@@ -40,7 +55,8 @@ namespace AX.Core.Business.Managers
             if (user.GetEncryptedPassword(passWord) != user.Password)
             { throw new AXWarringMesssageException("密码错误，请检查后重新登录"); }
 
-            return user;
+            //发放令牌
+            SetUserToken();
 
             ////设置 Cookie
             //HttpCookie cookie = new HttpCookie(BASE_AUTHCOOKIE_NAME);
@@ -49,23 +65,25 @@ namespace AX.Core.Business.Managers
             //cookie.Values["token"] = AX.Core.Encryption.AES.Encrypt(string.Format($"{user.Id}.{user.Salt}"));
             //HttpContext.Current.Response.AppendCookie(cookie);
 
-            ////登录日志
-            //var ip = BrowserInfo.GetClientIp();
-            //var browser = BrowserInfo.GetBrowserName();
-            //SystemLogLogic.Log("登录", string.Format("【{0}】在IP【{1}】使用【{2}】登陆系统", user.NickName, ip, browser));
-            //return user;
+            //记录日志
+            Log("登录系统", string.Format("【{0}】登陆系统", user.NickName));
+            return user;
         }
 
-        public bool LoginOut()
+        /// <summary>
+        /// 退出登录
+        /// </summary>
+        /// <returns></returns>
+        public void LoginOut()
         {
-            throw new NotSupportedException();
-            //var ip = BrowserInfo.GetClientIp();
-            //var browser = BrowserInfo.GetBrowserName();
-            //SystemLogLogic.Log("退出", string.Format("【{0}】于IP【{1}】使用【{2}】退出系统", GetCurrentUser().NickName, ip, browser));
+            ClearUserToken();
+
             //HttpCookie cookie = new HttpCookie(BASE_AUTHCOOKIE_NAME);
             //cookie.Expires = DateTime.Now.AddDays(-1);
             //HttpContext.Current.Response.AppendCookie(cookie);
             //return true;
+
+            Log("退出系统", string.Format("【{0}】退出系统", GetCurrentUser().NickName));
         }
     }
 }

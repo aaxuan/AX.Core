@@ -13,7 +13,7 @@ namespace AX.Core.Business.DataModel
     public abstract class Base_User
     {
         /// <summary>
-        /// 字符串 唯一主键
+        /// 唯一主键
         /// </summary>
         [Key]
         [DisplayName("唯一编号")]

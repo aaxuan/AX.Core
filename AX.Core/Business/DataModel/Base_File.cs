@@ -7,6 +7,9 @@ namespace AX.Core.Business.DataModel
     public class Base_File
     {
         [Key]
+        [DisplayName("唯一编号")]
+        public String Id { get; set; }
+
         [DisplayName("文件名称")]
         public string Name { get; set; }
 

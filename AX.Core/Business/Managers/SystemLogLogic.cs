@@ -6,14 +6,14 @@ namespace AX.Core.Business.Managers
 {
     public class SystemLogLogic : BaseLogic
     {
-        public static void Log(String content)
+        public new static void Log(String content)
         {
             var log = GetDefaultLog();
             log.Content = content;
             GetStaticDB().Insert(log);
         }
 
-        public static void Log(String type, String content)
+        public new static void Log(String type, String content)
         {
             var log = GetDefaultLog();
             log.Type = type;

@@ -12,6 +12,9 @@ namespace AX.Core.Business.DataModel
         [DisplayName("唯一编号")]
         public string Id { get; set; }
 
+        [DisplayName("日志类型")]
+        public string Type { get; set; }
+
         [DisplayName("日志内容")]
         public string Content { get; set; }
 

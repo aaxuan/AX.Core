@@ -13,5 +13,15 @@ namespace AX.Core.Business
         {
             return DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
         }
+
+        public static void Log(string content)
+        {
+            Managers.SystemLogLogic.Log(content);
+        }
+
+        public static void Log(string type, string content)
+        {
+            Managers.SystemLogLogic.Log(type, content);
+        }
     }
 }
