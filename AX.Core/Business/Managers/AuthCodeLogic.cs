@@ -21,10 +21,10 @@ namespace AX.Core.Business.Managers
             if (string.IsNullOrWhiteSpace(authCode.Code))
             { throw new AXWarringMesssageException("请输入权限码"); }
 
-            var oldModel = GetDB().SingleOrDefault<Base_AuthCode>("WHERE Code = @0", authCode.Code);
+            var oldModel = DB.SingleOrDefault<Base_AuthCode>("WHERE Code = @0", authCode.Code);
             if (oldModel != null)
             { throw new AXWarringMesssageException($"已存在 {authCode.Code} 权限码"); }
-            GetDB().Insert<Base_AuthCode>(authCode);
+            DB.Insert<Base_AuthCode>(authCode);
             return authCode;
         }
 
@@ -34,7 +34,7 @@ namespace AX.Core.Business.Managers
         /// <returns></returns>
         public List<Base_AuthCode> GetList()
         {
-            return GetDB().GetList<Base_AuthCode>();
+            return DB.GetList<Base_AuthCode>();
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace AX.Core.Business.Managers
         {
             if (string.IsNullOrWhiteSpace(ids))
             { return null; }
-            var authCodes = GetDB().GetList<Base_AuthCode>("WHERE Id IN @ids", ids);
+            var authCodes = DB.GetList<Base_AuthCode>("WHERE Id IN @ids", ids);
             return string.Join(",", authCodes.Select(p => p.Code).ToList());
         }
 

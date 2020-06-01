@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace AX.Core.Business.DataModel
 {
@@ -50,5 +48,23 @@ namespace AX.Core.Business.DataModel
         /// </summary>
         [DisplayName("备注")]
         public String Notes { get; set; }
+
+        /// <summary>
+        /// 仅系统管理员可见
+        /// </summary>
+        [DisplayName("仅系统管理员可见")]
+        public bool OnlyAdmin { get; set; }
+
+        /// <summary>
+        /// 权限码编号
+        /// </summary>
+        [DisplayName("权限码编号")]
+        public String AuthCodeId { get; set; }
+
+        /// <summary>
+        /// 权限码
+        /// </summary>
+        [DisplayName("权限码")]
+        public String AuthCode { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace AX.Core.Business.Managers
             if (string.IsNullOrWhiteSpace(loginName) || string.IsNullOrWhiteSpace(passWord))
             { throw new AXWarringMesssageException("登录名和密码不能为空"); }
 
-            var user = GetStaticDB().SingleOrDefault<Base_User>("where loginname = @LoginName", loginName);
+            var user = DB.SingleOrDefault<Base_User>("where loginname = @LoginName", loginName);
 
             if (user == null)
             { throw new AXWarringMesssageException("用户不存在"); }

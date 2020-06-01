@@ -28,9 +28,8 @@ namespace AX.Core.Business.Managers
             log.CreateDate = DateTime.Now.Date.Format(DateTimeEx.EnumFormatMode.yyyy_MM_dd);
             if (AuthLogic.IsLogin)
             {
-                var user = AuthLogic.GetCurrentUser();
-                log.UserId = user.Id;
-                log.UserName = user.NickName;
+                log.UserId = CurrentUser.Id;
+                log.UserName = CurrentUser.NickName;
             }
             return log;
         }

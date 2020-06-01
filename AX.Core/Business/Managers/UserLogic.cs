@@ -1,9 +1,4 @@
-﻿using AX.Core.Business.DataModel;
-using AX.Core.CommonModel.Exceptions;
-using AX.Core.Encryption;
-using AX.Core.Helper;
-
-namespace AX.Core.Business.Managers
+﻿namespace AX.Core.Business.Managers
 {
     /// <summary>
     /// 用户逻辑基类

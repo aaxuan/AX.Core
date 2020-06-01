@@ -92,12 +92,6 @@ namespace AX.Core.Business.DataModel
         public Boolean IsSuperAdmin { get; set; }
 
         /// <summary>
-        /// 是否启用
-        /// </summary>
-        [DisplayName("是否启用")]
-        public Boolean IsEnable { get; set; }
-
-        /// <summary>
         /// 创建时间
         /// </summary>
         [DisplayName("创建时间")]

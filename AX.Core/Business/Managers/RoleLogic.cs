@@ -1,50 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using AX.Core.Business.DataModel;
+using AX.Core.CommonModel.Exceptions;
 
 namespace AX.Core.Business.Managers
 {
-    class RoleLogic
+    internal class RoleLogic : BaseLogic
     {
-        //public Role Add(Role role)
-        //{
-        //    if (string.IsNullOrWhiteSpace(role.Name))
-        //    { throw new AXWarringMesssageException("请输入角色名称"); }
+        public Base_Role Add(Base_Role role)
+        {
+            if (string.IsNullOrWhiteSpace(role.Name))
+            { throw new AXWarringMesssageException("请输入角色名称"); }
 
-        //    var db = Services.DBFactory.GetDB();
-        //    if (db.SingleOrDefault<Role>("WHERE Name = @0", role.Name) != null)
-        //    { throw new AXWarringMesssageException("已存在角色"); }
+            if (string.IsNullOrWhiteSpace(role.AuthCodeIds))
+            { throw new AXWarringMesssageException("角色必须包含权限码"); }
 
-        //    role.Id = AX.Framework.ID.GuidManager.NewId();
-        //    db.Insert(role);
-        //    return role;
-        //}
+            if (DB.SingleOrDefault<Base_Role>("WHERE Name = @Name", role.Name) != null)
+            { throw new AXWarringMesssageException("已存在该角色名称"); }
 
-        //public Role Update(Role role)
-        //{
-        //    if (string.IsNullOrWhiteSpace(role.Id))
-        //    { throw new AXWarringMesssageException("没有主键"); }
-        //    if (string.IsNullOrWhiteSpace(role.Name))
-        //    { throw new AXWarringMesssageException("请输入角色名称"); }
-        //    var db = Services.DBFactory.GetDB();
+            DB.Insert(role);
+            return role;
+        }
 
-        //    var oldModel = db.SingleOrDefaultById<Role>(role.Id);
-        //    oldModel.Name = role.Name;
-        //    oldModel.Description = role.Description;
-        //    oldModel.AuthorizationCodeIds = role.AuthorizationCodeIds;
+        public Base_Role Update(Base_Role role)
+        {
+            if (string.IsNullOrWhiteSpace(role.Name))
+            { throw new AXWarringMesssageException("请输入角色名称"); }
+            DB.CheckById<Base_Role>(role.Id);
+            role.AuthCodeStrs = new AuthCodeLogic().GetCodeStringByIds(role.AuthCodeIds);
+            DB.Update<Base_Role>(role);
+            return role;
+        }
 
-        //    db.Update<Role>(oldModel, new string[] { "Name", "Description", "AuthorizationCodeIds" });
-        //    return oldModel;
-        //}
-
-        //public Role Get(string id)
-        //{
-        //    var db = Services.DBFactory.GetDB();
-        //    var result = db.SingleOrDefaultById<Role>(id);
-        //    if (result == null)
-        //    { throw new AXWarringMesssageException("角色不存在"); }
-        //    result.AuthorizationCodeIds = new AuthorizationCodeLogic().GetCodeStringByIds(result.AuthorizationCodeIds);
-        //    return result;
-        //}
+        public Base_Role Get(string id)
+        {
+            var result = DB.CheckById<Base_Role>(id);
+            return result;
+        }
     }
 }

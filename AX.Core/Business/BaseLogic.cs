@@ -1,13 +1,13 @@
-﻿using AX.Core.DataBase;
+﻿using AX.Core.Business.DataModel;
+using AX.Core.DataBase;
 
 namespace AX.Core.Business
 {
     public class BaseLogic
     {
-        public DataRepository GetDB()
-        {
-            return GetStaticDB();
-        }
+        public static DataRepository DB { get { return GetStaticDB(); } }
+
+        public static Base_User CurrentUser { get { return Managers.AuthLogic.GetCurrentUser(); } }
 
         public static DataRepository GetStaticDB()
         {

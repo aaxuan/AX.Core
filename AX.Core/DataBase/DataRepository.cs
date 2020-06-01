@@ -343,6 +343,9 @@ namespace AX.Core.DataBase
 
         public T CheckById<T>(object id)
         {
+            if (id == null)
+            { throw new AXWarringMesssageException($"请传入ID {typeof(T).Name}.{id}"); }
+
             var result = FirstOrDefaultById<T>(id);
             if (result == null)
             { throw new AXWarringMesssageException($"数据已过期或不存在 {typeof(T).Name}.{id}"); }

@@ -7,7 +7,7 @@ namespace AX.Core.Business.DataModel
 {
     [DisplayName("角色")]
     [Table("base_Role")]
-    public class Role
+    public class Base_Role
     {
         [Key]
         [DisplayName("唯一编号")]
@@ -29,12 +29,12 @@ namespace AX.Core.Business.DataModel
         /// 包含权限码ID
         /// </summary>
         [DisplayName("包含权限码编号")]
-        public String AuthorizationCodeIds { get; set; }
+        public String AuthCodeIds { get; set; }
 
         /// <summary>
         /// 权限码值
         /// </summary>
         [DisplayName("权限码值")]
-        public string AuthorizationCodeStrs { get; set; }
+        public string AuthCodeStrs { get; set; }
     }
 }
