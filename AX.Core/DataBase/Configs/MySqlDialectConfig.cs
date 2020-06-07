@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
@@ -22,16 +23,16 @@ namespace AX.Core.DataBase.Configs
             return $"SELECT COUNT(*) FROM information_schema.`COLUMNS` WHERE TABLE_NAME = '{tableName}' AND COLUMN_NAME = '{fieldName}' AND TABLE_SCHEMA = '{dataBaseName}'";
         }
 
-        public string GetCreateTableSql(string tableName, string KeyName, PropertyInfo[] propertyInfos)
+        public string GetCreateTableSql(string tableName, string KeyName, List<PropertyInfo> propertyInfos)
         {
             var result = new StringBuilder();
 
             result.Append($"CREATE TABLE IF NOT EXISTS {tableName} (");
-            for (int i = 0; i < propertyInfos.Length; i++)
+            for (int i = 0; i < propertyInfos.Count; i++)
             {
                 var item = propertyInfos[i];
                 result.Append($"{item.Name.ToLower()} {GetType(item)}");
-                if (i != propertyInfos.Length)
+                if (i != propertyInfos.Count)
                 { result.Append($","); }
             }
             result.Append($"PRIMARY KEY({KeyName})");

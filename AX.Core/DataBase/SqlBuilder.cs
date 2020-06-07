@@ -112,7 +112,7 @@ namespace AX.Core.DataBase
 
         #region SQL拼接
 
-        public StringBuilder BuildSelectSqlNoWhere<T>(string tableName, PropertyInfo[] selectPops)
+        public StringBuilder BuildSelectSqlNoWhere<T>(string tableName, List<PropertyInfo> selectPops)
         {
             StringBuilder sb = new StringBuilder();
             var props = UseEscapeChar(selectPops);
@@ -120,7 +120,7 @@ namespace AX.Core.DataBase
             return sb;
         }
 
-        public StringBuilder BuildSelectSql<T>(string tableName, PropertyInfo[] selectPops)
+        public StringBuilder BuildSelectSql<T>(string tableName, List<PropertyInfo> selectPops)
         {
             StringBuilder sb = new StringBuilder();
             var props = UseEscapeChar(selectPops);
@@ -143,7 +143,7 @@ namespace AX.Core.DataBase
         public StringBuilder BuildInsertSql<T>(string tableName)
         {
             StringBuilder sb = new StringBuilder();
-            var properties = typeof(T).GetProperties().ToList();
+            var properties = Schema.SchemaProvider.GetInsertProperties<T>();
             var props = UseEscapeChar(properties);
             var parms = UseParmChar(properties);
             sb.AppendFormat("INSERT INTO {0} ({1}) VALUES ({2}) ", tableName, string.Join(",", props), string.Join(",", parms));

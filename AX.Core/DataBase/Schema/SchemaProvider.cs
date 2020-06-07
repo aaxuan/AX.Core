@@ -1,5 +1,7 @@
 ﻿using AX.Core.Cache;
 using AX.Core.CommonModel.Exceptions;
+using AX.Core.DataBase.Schema.Attributes;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -67,6 +69,90 @@ namespace AX.Core.DataBase.Schema
             { return prop; }
 
             throw new AXDataBaseException($"【{typeof(T).FullName}】 未找到主键标注", string.Empty);
+        }
+
+        /// <summary>
+        /// 获取表结构的 PropertyInfo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<PropertyInfo> GetSchemaProperties<T>()
+        {
+            var allProperties = typeof(T).GetProperties();
+            var result = new List<PropertyInfo>();
+            for (int i = 0; i < allProperties.Length; i++)
+            {
+                var prop = allProperties[i];
+                var propAttributes = prop.GetCustomAttributes(true);
+                if (propAttributes.Any(s => s.GetType() == typeof(IgnoreAttribute)))
+                { continue; }
+                result.Add(prop);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获取插入的 PropertyInfo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<PropertyInfo> GetInsertProperties<T>()
+        {
+            var allProperties = typeof(T).GetProperties();
+            var result = new List<PropertyInfo>();
+            for (int i = 0; i < allProperties.Length; i++)
+            {
+                var prop = allProperties[i];
+                var propAttributes = prop.GetCustomAttributes(true);
+                if (propAttributes.Any(s => s.GetType() == typeof(IgnoreAttribute)))
+                { continue; }
+                if (propAttributes.Any(s => s.GetType() == typeof(OnlySelectAttribute)))
+                { continue; }
+                result.Add(prop);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获查询的 PropertyInfo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<PropertyInfo> GetSelectProperties<T>()
+        {
+            var allProperties = typeof(T).GetProperties();
+            var result = new List<PropertyInfo>();
+            for (int i = 0; i < allProperties.Length; i++)
+            {
+                var prop = allProperties[i];
+                var propAttributes = prop.GetCustomAttributes(true);
+                if (propAttributes.Any(s => s.GetType() == typeof(IgnoreAttribute)))
+                { continue; }
+                result.Add(prop);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 获更新的 PropertyInfo
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public static List<PropertyInfo> GetUpdataProperties<T>()
+        {
+            var allProperties = typeof(T).GetProperties();
+            var result = new List<PropertyInfo>();
+            for (int i = 0; i < allProperties.Length; i++)
+            {
+                var prop = allProperties[i];
+                var propAttributes = prop.GetCustomAttributes(true);
+                if (propAttributes.Any(s => s.GetType() == typeof(IgnoreAttribute)))
+                { continue; }
+                if (propAttributes.Any(s => s.GetType() == typeof(OnlySelectAttribute)))
+                { continue; }
+                result.Add(prop);
+            }
+            return result;
         }
     }
 }

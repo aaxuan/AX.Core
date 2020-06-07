@@ -2,6 +2,7 @@
 using AX.Core.DataBase;
 using MySql.Data.MySqlClient;
 using System;
+using static AX.Core.DataBase.DBFactory;
 
 namespace NetCoreUseDemo
 {
@@ -19,6 +20,7 @@ namespace NetCoreUseDemo
 
             public decimal money { get; set; }
 
+            [AX.Core.DataBase.Schema.Attributes.Ignore]
             public decimal? money2 { get; set; }
         }
 
@@ -32,9 +34,10 @@ namespace NetCoreUseDemo
             return new DataRepository(new MySqlConnection(schemaDB.ConnectionString));
         }
 
-        public void test()
+        public void Test()
         {
-            DBFactory.SetDB(DBFactory.DefaultDBKey, "server=localhost;userid=root;pwd=123qwe;database=test;sslmode=none;", DataBaseType.MySql);
+            var jsonconfig = new AX.Core.Config.JsonConfig("jsonConfig.json");
+            DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("HomeConnectionString"), DataBaseType.MySql);
             DBFactory.GetDataRepositoryFunc = GetDataBase;
             var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
 

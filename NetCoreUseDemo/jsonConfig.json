@@ -6,6 +6,10 @@
     "eee": 6
   },
   "fff": [
-    123,123,123
-  ]
+    123,
+    123,
+    123
+  ],
+  "CompanyConnectionString": "server=localhost;userid=root;pwd=123qwe;database=test;sslmode=none;",
+  "HomeConnectionString": "server=localhost;userid=root;pwd=;database=test;sslmode=none;"
 }

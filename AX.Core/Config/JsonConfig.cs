@@ -18,11 +18,16 @@ namespace AX.Core.Config
 
         /// <summary>
         /// 使用文件路径和实体类创建配置实例
+        /// 无文件 名默认文件名 jsonConfig.json
         /// 无文件会根据类创建默认文件,若type传 null 值，则抛出异常
         /// </summary>
         /// <param name="configFileNamePath"></param>
-        public JsonConfig(string configFileNamePath, Type configType = null)
+        public JsonConfig(string configFileNamePath = null, Type configType = null)
         {
+            if (configFileNamePath == null)
+            {
+                configFileNamePath = "jsonConfig.json";
+            }
             _configFileNamePath = configFileNamePath;
             if (File.Exists(configFileNamePath) == false)
             {
@@ -60,7 +65,7 @@ namespace AX.Core.Config
         }
 
         /// <summary>
-        /// 设置值
+        /// 设置值(仅内存 不存储)
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>

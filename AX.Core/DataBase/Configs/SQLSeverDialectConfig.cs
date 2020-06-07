@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace AX.Core.DataBase.Configs
@@ -21,17 +22,17 @@ namespace AX.Core.DataBase.Configs
             return $"SELECT COUNT(*) FROM syscolumns WHERE id = object_id('{tableName}') AND name = '{ fieldName }'";
         }
 
-        public string GetCreateTableSql(string tableName, string KeyName, PropertyInfo[] propertyInfos)
+        public string GetCreateTableSql(string tableName, string KeyName, List<PropertyInfo> propertyInfos)
         {
             var result = new StringBuilder();
 
             // 新建表
             result.Append($"create table {tableName}(");
-            for (int i = 0; i < propertyInfos.Length; i++)
+            for (int i = 0; i < propertyInfos.Count; i++)
             {
                 var item = propertyInfos[i];
                 result.Append($"{item.Name.ToLower()} {GetType(item)}");
-                if (i != propertyInfos.Length)
+                if (i != propertyInfos.Count)
                 { result.Append($","); }
             }
             result.Append($")");

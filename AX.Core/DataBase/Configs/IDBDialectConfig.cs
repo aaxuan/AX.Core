@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace AX.Core.DataBase.Configs
@@ -47,7 +48,7 @@ namespace AX.Core.DataBase.Configs
         /// <param name="KeyName"></param>
         /// <param name="propertyInfos"></param>
         /// <returns></returns>
-        String GetCreateTableSql(String tableName, String KeyName, PropertyInfo[] propertyInfos);
+        String GetCreateTableSql(String tableName, String KeyName, List<PropertyInfo> propertyInfos);
 
         /// <summary>
         /// 获取建字段语句

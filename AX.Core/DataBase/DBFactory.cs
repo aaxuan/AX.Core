@@ -5,6 +5,12 @@ namespace AX.Core.DataBase
 {
     public static class DBFactory
     {
+        public enum DataBaseType
+        {
+            None = 0,
+            MySql = 1
+        }
+
         public static readonly string DefaultDBKey = "BASE";
 
         public static Func<Schema.SchemaDB, DataRepository> GetDataRepositoryFunc { get; set; }

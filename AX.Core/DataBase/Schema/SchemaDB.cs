@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using static AX.Core.DataBase.DBFactory;
 
 namespace AX.Core.DataBase.Schema
 {

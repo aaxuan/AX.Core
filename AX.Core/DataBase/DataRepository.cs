@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using static AX.Core.DataBase.DBFactory;
 
 namespace AX.Core.DataBase
 {
@@ -179,7 +180,7 @@ namespace AX.Core.DataBase
             { throw new AXDataBaseException($"不能更新 Null 实体 【{typeof(T).FullName}】"); }
             if (key.GetValue(entity, null) == null)
             { throw new AXDataBaseException($"不能更新 主键无值 实体 【{typeof(T).FullName}】"); }
-            var upfield = typeof(T).GetProperties().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
+            var upfield = SchemaProvider.GetUpdataProperties<T>().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
             var sb = _sqlBuilder.BuildUpdateByIdSql<T>(SchemaProvider.GetTableName<T>(), upfield);
             var result = ExecuteNonQuery(sb.ToString(), entity);
             return result;
@@ -192,7 +193,7 @@ namespace AX.Core.DataBase
             { throw new AXDataBaseException($"不能更新 Null 实体 【{typeof(T).FullName}】"); }
             if (key.GetValue(entity, null) == null)
             { throw new AXDataBaseException($"不能更新 主键无值 实体 【{typeof(T).FullName}】"); }
-            var allField = typeof(T).GetProperties().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
+            var allField = SchemaProvider.GetUpdataProperties<T>().Where(p => p.Name != key.Name).Select(p => p.Name).ToArray();
             var upfields = new List<string>();
             var upFieldStrs = fields.Split(",");
             foreach (var item in upFieldStrs)
@@ -288,7 +289,7 @@ namespace AX.Core.DataBase
 
         public List<T> GetList<T>()
         {
-            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties());
+            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>());
             var table = GetDataTable(sb.ToString(), null);
             return table.ToList<T>();
         }
@@ -296,7 +297,7 @@ namespace AX.Core.DataBase
         public List<T> GetList<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties()); }
+            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>();
         }
@@ -304,7 +305,7 @@ namespace AX.Core.DataBase
         public T SingleOrDefault<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties()); }
+            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>().SingleOrDefault();
         }
@@ -314,7 +315,7 @@ namespace AX.Core.DataBase
             if (id == null)
             { return default(T); }
 
-            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties());
+            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>());
             var parmName = _sqlBuilder.UseParmChar(SchemaProvider.GetPrimaryKey<T>().Name);
             sb.AppendFormat(" AND {0} = {1}", SchemaProvider.GetPrimaryKey<T>().Name, parmName);
             var table = GetDataTable(sb.ToString(), null);
@@ -324,7 +325,7 @@ namespace AX.Core.DataBase
         public T FirstOrDefault<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties()); }
+            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>().FirstOrDefault();
         }
@@ -334,7 +335,7 @@ namespace AX.Core.DataBase
             if (id == null)
             { return default(T); }
 
-            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), typeof(T).GetProperties());
+            var sb = _sqlBuilder.BuildSelectSql<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>());
             var parmName = _sqlBuilder.UseParmChar(SchemaProvider.GetPrimaryKey<T>().Name);
             sb.AppendFormat(" AND {0} = {1}", SchemaProvider.GetPrimaryKey<T>().Name, parmName);
             var table = GetDataTable(sb.ToString(), null);
@@ -390,7 +391,7 @@ namespace AX.Core.DataBase
             var result = new StringBuilder();
             var dbName = Connection.Database;
             var tableName = SchemaProvider.GetTableName<T>();
-            var fields = typeof(T).GetProperties();
+            var fields = SchemaProvider.GetSchemaProperties<T>();
 
             //判断表是否存在
             var exitSql = _dbConfig.GetTableExitSql(tableName, dbName);
@@ -401,7 +402,7 @@ namespace AX.Core.DataBase
             //判断字段是否存在
             else
             {
-                for (int i = 0; i < fields.Length; i++)
+                for (int i = 0; i < fields.Count; i++)
                 {
                     var item = fields[i];
                     var filedExitSql = _dbConfig.GetFiledExitSql(item.Name, tableName, dbName);
@@ -421,7 +422,7 @@ namespace AX.Core.DataBase
         {
             var tableName = _sqlBuilder.UseEscapeChar(SchemaProvider.GetTableName<T>());
             var keyName = SchemaProvider.GetPrimaryKey<T>().Name;
-            var fields = typeof(T).GetProperties();
+            var fields = SchemaProvider.GetSchemaProperties<T>();
 
             if (sb == null)
             { sb = new StringBuilder(); }
