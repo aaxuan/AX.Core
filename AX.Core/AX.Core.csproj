@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>基于 .Net standard 2.0.3 开发的通用基础类库</Description>
     <PackageProjectUrl>https://github.com/aaxuan/AX.Core</PackageProjectUrl>
@@ -13,6 +13,10 @@
     <Authors>AaXuan</Authors>
     <Company>AaXuan</Company>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="DataBase\DataRepository.cs~RF42fc8f.TMP" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />

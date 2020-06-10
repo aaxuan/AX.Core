@@ -22,6 +22,7 @@ namespace AX.Core.DataBase
 
         public DataRepository UseConfig(DataBaseType dataBaseType)
         {
+            _dataBaseType = dataBaseType;
             switch (dataBaseType)
             {
                 case DataBaseType.None: return this;
@@ -38,6 +39,8 @@ namespace AX.Core.DataBase
         }
 
         #region 私有变量/方法
+
+        private DataBaseType _dataBaseType;
 
         private IDBDialectConfig _dbConfig;
 
@@ -386,7 +389,73 @@ namespace AX.Core.DataBase
 
         #region 结构
 
-        public String SetSchema<T>(Boolean execute)
+        public bool TestConnection()
+        {
+            try
+            {
+                var result = ExecuteScalar<string>("Select 'test' as test;");
+                if (string.IsNullOrWhiteSpace(result))
+                { return false; }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<SchemaDB> LoadDBSchemas()
+        {
+            var result = new List<SchemaDB>();
+            var dbNametb = GetDataTable(_dbConfig.GetLoadDBSchemasSql());
+            foreach (DataRow row in dbNametb.Rows)
+            {
+                var resultItem = new SchemaDB();
+                resultItem.CodeName = row[0].ToString();
+                resultItem.Description = row[0].ToString();
+                resultItem.DisplayName = row[0].ToString();
+                resultItem.ConnectionString = Connection.ConnectionString;
+                resultItem.DBType = _dataBaseType;
+                result.Add(resultItem);
+            }
+            return result;
+        }
+
+        public List<SchemaTable> LoadDBSchemaTables(string dbName)
+        {
+            var result = new List<SchemaTable>();
+            var dbtabletb = GetDataTable(_dbConfig.GetLoadDBTableSql(dbName));
+            foreach (DataRow row in dbtabletb.Rows)
+            {
+                var resultItem = new SchemaTable();
+                resultItem.CodeName = row["TABLE_NAME"].ToString();
+                resultItem.Description = row["TABLE_COMMENT"].ToString();
+                resultItem.DisplayName = row["TABLE_NAME"].ToString();
+                result.Add(resultItem);
+            }
+            return result;
+        }
+
+        public List<SchemaColmun> LoadDBColmuns(string dbName, string tanbleName)
+        {
+            var result = new List<SchemaColmun>();
+            var dbcolmuntb = GetDataTable(_dbConfig.GetLoadDBColmunSql(dbName, tanbleName));
+            foreach (DataRow row in dbcolmuntb.Rows)
+            {
+                var resultItem = new SchemaColmun();
+                resultItem.CodeName = row["COLUMN_NAME"].ToString();
+                resultItem.DefaultValue = row["COLUMN_DEFAULT"].ToString();
+                resultItem.CanNullable = row["IS_NULLABLE"].ToString() == "YES" ? true : false;
+                resultItem.IsPrimaryKey = row["COLUMN_KEY"].ToString() == "PRI" ? true : false;
+                resultItem.DisplayName = resultItem.Description = row["COLUMN_COMMENT"].ToString();
+                resultItem.DBType = row["DATA_TYPE"].ToString();
+                resultItem.Order = int.Parse(row["ORDINAL_POSITION"].ToString());
+                result.Add(resultItem);
+            }
+            return result;
+        }
+
+        public String SetSchemaByModel<T>(Boolean execute)
         {
             var result = new StringBuilder();
             var dbName = Connection.Database;
@@ -397,7 +466,7 @@ namespace AX.Core.DataBase
             var exitSql = _dbConfig.GetTableExitSql(tableName, dbName);
             if (ExecuteScalar<int>(exitSql) <= 0)
             {
-                result.Append(GetCreateTableSql<T>(result));
+                result.Append(GetCreateTableSqlByModel<T>(result));
             }
             //判断字段是否存在
             else
@@ -418,7 +487,7 @@ namespace AX.Core.DataBase
             return result.ToString();
         }
 
-        public String GetCreateTableSql<T>(StringBuilder sb)
+        public String GetCreateTableSqlByModel<T>(StringBuilder sb)
         {
             var tableName = _sqlBuilder.UseEscapeChar(SchemaProvider.GetTableName<T>());
             var keyName = SchemaProvider.GetPrimaryKey<T>().Name;

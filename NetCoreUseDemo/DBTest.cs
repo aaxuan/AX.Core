@@ -2,6 +2,7 @@
 using AX.Core.DataBase;
 using MySql.Data.MySqlClient;
 using System;
+using System.Linq;
 using static AX.Core.DataBase.DBFactory;
 
 namespace NetCoreUseDemo
@@ -37,15 +38,19 @@ namespace NetCoreUseDemo
         public void Test()
         {
             var jsonconfig = new AX.Core.Config.JsonConfig("jsonConfig.json");
-            DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("HomeConnectionString"), DataBaseType.MySql);
+            DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("CompanyConnectionString"), DataBaseType.MySql);
             DBFactory.GetDataRepositoryFunc = GetDataBase;
             var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
+            var b = db.TestConnection();
+            var alldb = db.LoadDBSchemas();
+            var alltable = db.LoadDBSchemaTables(alldb.First().CodeName);
+            var allcolmun = db.LoadDBColmuns(alldb.First().CodeName, alltable.First().CodeName);
 
-            db.SetSchema<DemoTable>(true);
-            var model = db.Insert<DemoTable>(new DemoTable() { CreateTime = DateTime.Now, isuse = true, money = 98.8M });
-            model.CreateTime2 = DateTime.Now;
-            model.money2 = 100.02M;
-            db.Update<DemoTable>(model);
+            //db.SetSchemaByModel<DemoTable>(true);
+            //var model = db.Insert<DemoTable>(new DemoTable() { CreateTime = DateTime.Now, isuse = true, money = 98.8M });
+            //model.CreateTime2 = DateTime.Now;
+            //model.money2 = 100.02M;
+            //db.Update<DemoTable>(model);
         }
     }
 }

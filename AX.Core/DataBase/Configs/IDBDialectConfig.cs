@@ -57,5 +57,26 @@ namespace AX.Core.DataBase.Configs
         /// <param name="item"></param>
         /// <returns></returns>
         String GetCreateFieldSql(String tableName, PropertyInfo item);
+
+        /// <summary>
+        /// 加载当前连接 所有库的语句
+        /// </summary>
+        /// <returns></returns>
+        string GetLoadDBSchemasSql();
+
+        /// <summary>
+        /// 加载当前连接 某库的表语句
+        /// </summary>
+        /// <param name="dbName"></param>
+        /// <returns></returns>
+        string GetLoadDBTableSql(string dbName);
+
+        /// <summary>
+        /// 加载当前连接 某库某表的列语句
+        /// </summary>
+        /// <param name="dbName"></param>
+        /// <param name="tablename"></param>
+        /// <returns></returns>
+        string GetLoadDBColmunSql(string dbName, string tablename);
     }
 }
