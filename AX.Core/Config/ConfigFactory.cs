@@ -7,7 +7,7 @@ namespace AX.Core.Config
     /// <summary>
     /// 配置工厂 提供全局管理配置的能力
     /// </summary>
-    internal class ConfigFactory
+    public class ConfigFactory
     {
         private static readonly MemoryCache<JsonConfig> _configCache;
 
