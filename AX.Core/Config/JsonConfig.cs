@@ -65,7 +65,10 @@ namespace AX.Core.Config
         /// <param name="value"></param>
         public void SetValue(string key, object value)
         {
-            _configJobject[key] = JToken.FromObject(value);
+            if (_configJobject.ContainsKey(key))
+            { _configJobject[key] = JToken.FromObject(value); }
+            else
+            { _configJobject.Add(new JProperty(key, value)); }
         }
 
         /// <summary>
