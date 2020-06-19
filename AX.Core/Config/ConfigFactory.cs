@@ -29,11 +29,25 @@ namespace AX.Core.Config
         }
 
         /// <summary>
+        /// 简单模式 获取默认名称配置对象
+        /// </summary>
+        /// <param name="cacheName"></param>
+        /// <returns></returns>
+        public static JsonConfig GetDefaultConfig()
+        {
+            if (_configCache.ContainsKey(JsonConfig.DefaultFileNamePath))
+            {
+                return _configCache[JsonConfig.DefaultFileNamePath];
+            }
+            return null;
+        }
+
+        /// <summary>
         /// 获取配置对象
         /// </summary>
         /// <param name="cacheName"></param>
         /// <returns></returns>
-        public static JsonConfig GetCache(string filePath)
+        public static JsonConfig GetConfig(string filePath)
         {
             filePath.CheckIsNullOrWhiteSpace();
             if (_configCache.ContainsKey(filePath))

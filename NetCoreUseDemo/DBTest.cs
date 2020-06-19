@@ -37,7 +37,7 @@ namespace NetCoreUseDemo
 
         public void Test()
         {
-            var jsonconfig = new AX.Core.Config.JsonConfig("jsonConfig.json");
+            var jsonconfig = new AX.Core.Config.JsonConfig("jsonconfig.json");
             DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("CompanyConnectionString"), DataBaseType.MySql);
             DBFactory.GetDataRepositoryFunc = GetDataBase;
             var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
