@@ -45,6 +45,7 @@ namespace NetCoreUseDemo
 
             DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("CompanyConnectionString"), DataBaseType.MySql);
             DBFactory.GetDataRepositoryFunc = GetDataBase;
+
             var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
             var b = db.TestConnection();
             var alldb = db.LoadDBSchemas();

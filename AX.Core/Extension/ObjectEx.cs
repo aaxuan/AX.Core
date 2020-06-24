@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace AX.Core.Extension
 {
@@ -73,6 +75,8 @@ namespace AX.Core.Extension
         }
 
         public static string ToJson(this Object obj)
-        { return Newtonsoft.Json.JsonConvert.SerializeObject(obj); }
+        { return JsonConvert.SerializeObject(obj); }
+
+
     }
 }
