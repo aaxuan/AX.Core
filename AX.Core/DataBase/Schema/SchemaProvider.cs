@@ -18,13 +18,6 @@ namespace AX.Core.DataBase.Schema
             _tableNameCache = CacheFactory.CreateCache<string>("数据实体类表名缓存") as MemoryCache<string>;
         }
 
-        /// <summary>
-        /// 获取实体表名称
-        /// 尝试 System.ComponentModel.DataAnnotations.Schema.TableAttribute 特性
-        /// 没有则取实体类名
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static string GetTableName<T>()
         {
             var result = string.Empty;
@@ -47,13 +40,6 @@ namespace AX.Core.DataBase.Schema
             }
         }
 
-        /// <summary>
-        /// 获取实体表主键字段
-        /// 尝试 System.ComponentModel.DataAnnotations.KeyAttribute 特性
-        /// 没有则取名称为Id的字段 位取到则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static PropertyInfo GetPrimaryKey<T>()
         {
             PropertyInfo prop = null;
@@ -71,11 +57,6 @@ namespace AX.Core.DataBase.Schema
             throw new AXDataBaseException($"【{typeof(T).FullName}】 未找到主键标注", string.Empty);
         }
 
-        /// <summary>
-        /// 获取表结构的 PropertyInfo
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static List<PropertyInfo> GetSchemaProperties<T>()
         {
             var allProperties = typeof(T).GetProperties();
@@ -91,11 +72,6 @@ namespace AX.Core.DataBase.Schema
             return result;
         }
 
-        /// <summary>
-        /// 获取插入的 PropertyInfo
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static List<PropertyInfo> GetInsertProperties<T>()
         {
             var allProperties = typeof(T).GetProperties();
@@ -113,11 +89,6 @@ namespace AX.Core.DataBase.Schema
             return result;
         }
 
-        /// <summary>
-        /// 获查询的 PropertyInfo
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static List<PropertyInfo> GetSelectProperties<T>()
         {
             var allProperties = typeof(T).GetProperties();
@@ -133,11 +104,6 @@ namespace AX.Core.DataBase.Schema
             return result;
         }
 
-        /// <summary>
-        /// 获更新的 PropertyInfo
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
         public static List<PropertyInfo> GetUpdataProperties<T>()
         {
             var allProperties = typeof(T).GetProperties();

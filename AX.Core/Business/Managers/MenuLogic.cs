@@ -6,16 +6,8 @@ using System.Linq;
 
 namespace AX.Core.Business.Managers
 {
-    /// <summary>
-    ///
-    /// </summary>
     public class MenuLogic : BaseLogic
     {
-        /// <summary>
-        /// 添加菜单项
-        /// </summary>
-        /// <param name="menu"></param>
-        /// <returns></returns>
         public Base_Menu Add(Base_Menu menu)
         {
             if (string.IsNullOrWhiteSpace(menu.Name))
@@ -29,11 +21,6 @@ namespace AX.Core.Business.Managers
             return menu;
         }
 
-        /// <summary>
-        /// 更新菜单项
-        /// </summary>
-        /// <param name="menu"></param>
-        /// <returns></returns>
         public Base_Menu UpDate(Base_Menu menu)
         {
             if (string.IsNullOrWhiteSpace(menu.Name))
@@ -45,20 +32,12 @@ namespace AX.Core.Business.Managers
             return menu;
         }
 
-        /// <summary>
-        /// 获取列表
-        /// </summary>
-        /// <returns></returns>
         public List<Base_Menu> GetList()
         {
             var result = DB.GetList<Base_Menu>();
             return result;
         }
 
-        /// <summary>
-        /// 获取一级菜单
-        /// </summary>
-        /// <returns></returns>
         public List<Base_Menu> GetFirstMenuByCurrentUser()
         {
             var result = new List<Base_Menu>();
@@ -73,10 +52,6 @@ namespace AX.Core.Business.Managers
             return result;
         }
 
-        /// <summary>
-        /// 获取当前用户可视菜单
-        /// </summary>
-        /// <returns></returns>
         public List<MenuTreeNode> GetMenuTreeByCurrentUser()
         {
             var result = new List<MenuTreeNode>();

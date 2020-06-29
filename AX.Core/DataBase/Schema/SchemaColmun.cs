@@ -5,6 +5,7 @@ using System.Text;
 
 namespace AX.Core.DataBase.Schema
 {
+    [Serializable]
     public class SchemaColmun
     {
         [DisplayName("代码名称")]

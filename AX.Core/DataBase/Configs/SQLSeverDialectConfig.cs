@@ -26,7 +26,6 @@ namespace AX.Core.DataBase.Configs
         {
             var result = new StringBuilder();
 
-            // 新建表
             result.Append($"create table {tableName}(");
             for (int i = 0; i < propertyInfos.Count; i++)
             {

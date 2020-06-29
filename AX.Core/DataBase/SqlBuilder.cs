@@ -186,10 +186,6 @@ namespace AX.Core.DataBase
 
         #endregion SQL拼接
 
-        /// <summary>
-        /// 对象转换DbParameter
-        /// </summary>
-        /// <returns></returns>
         public DbParameter GetParameter<T>(DbCommand cmd, T entity, PropertyInfo propertyInfo)
         {
             var result = cmd.CreateParameter();

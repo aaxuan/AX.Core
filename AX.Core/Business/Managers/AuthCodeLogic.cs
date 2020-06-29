@@ -6,16 +6,8 @@ using System.Linq;
 
 namespace AX.Core.Business.Managers
 {
-    /// <summary>
-    ///
-    /// </summary>
     internal class AuthCodeLogic : BaseLogic
     {
-        /// <summary>
-        /// 添加权限码
-        /// </summary>
-        /// <param name="authCode"></param>
-        /// <returns></returns>
         public Base_AuthCode Add(Base_AuthCode authCode)
         {
             if (string.IsNullOrWhiteSpace(authCode.Code))
@@ -28,20 +20,11 @@ namespace AX.Core.Business.Managers
             return authCode;
         }
 
-        /// <summary>
-        /// 获取全部列表
-        /// </summary>
-        /// <returns></returns>
         public List<Base_AuthCode> GetList()
         {
             return DB.GetList<Base_AuthCode>();
         }
 
-        /// <summary>
-        /// 根据一组 id 获取逗号分隔组合的 code 串
-        /// </summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
         public String GetCodeStringByIds(String ids)
         {
             if (string.IsNullOrWhiteSpace(ids))
@@ -50,10 +33,6 @@ namespace AX.Core.Business.Managers
             return string.Join(",", authCodes.Select(p => p.Code).ToList());
         }
 
-        /// <summary>
-        /// 获取权限码字典
-        /// </summary>
-        /// <returns></returns>
         public Dictionary<String, Base_AuthCode> GetDictionary()
         {
             return GetList().ToDictionary(p => p.Id, p => p);

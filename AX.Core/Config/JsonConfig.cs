@@ -45,12 +45,6 @@ namespace AX.Core.Config
             _configJobject = JObject.Parse(jsonConfigText.ToString());
         }
 
-        /// <summary>
-        /// 获取特定类型值 没有则返回 defult(T)
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="key"></param>
-        /// <returns></returns>
         public T GetValue<T>(string key)
         {
             var result = default(T);
@@ -58,11 +52,6 @@ namespace AX.Core.Config
             return result;
         }
 
-        /// <summary>
-        /// 设置值(仅内存 不存储)
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
         public void SetValue(string key, object value)
         {
             if (_configJobject.ContainsKey(key))
@@ -71,9 +60,6 @@ namespace AX.Core.Config
             { _configJobject.Add(new JProperty(key, value)); }
         }
 
-        /// <summary>
-        /// 保存文件
-        /// </summary>
         public void SaveToFile()
         {
             File.WriteAllText(_configFileNamePath, _configJobject.ToString());

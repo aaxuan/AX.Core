@@ -28,10 +28,6 @@ namespace AX.Core.Business.Managers
             DB.Delete<Base_UserRoleMap>(id);
         }
 
-        /// <summary>
-        /// 获取当前用户角色
-        /// </summary>
-        /// <returns></returns>
         public List<Base_Role> GetCurrentUserRole()
         {
             var userRoleMaps = DB.GetList<Base_UserRoleMap>("WHERE UserId = @0", CurrentUser.Id);
@@ -40,10 +36,6 @@ namespace AX.Core.Business.Managers
             return roles;
         }
 
-        /// <summary>
-        /// 获取当前用户所有角色权限编码
-        /// </summary>
-        /// <returns></returns>
         public HashSet<string> GetCurrentAllRoleAuthCode()
         {
             var roles = GetCurrentUserRole();

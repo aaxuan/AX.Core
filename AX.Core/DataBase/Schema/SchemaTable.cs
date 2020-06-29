@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace AX.Core.DataBase.Schema
 {
+    [Serializable]
     public class SchemaTable
     {
         public SchemaTable()

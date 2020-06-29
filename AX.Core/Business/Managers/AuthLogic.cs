@@ -10,9 +10,6 @@ namespace AX.Core.Business.Managers
         public static Action SetUserToken;
         public static Action ClearUserToken;
 
-        /// <summary>
-        /// 当前环境用户是否登录
-        /// </summary>
         public static bool IsLogin
         {
             get
@@ -24,21 +21,11 @@ namespace AX.Core.Business.Managers
             }
         }
 
-        /// <summary>
-        /// 获取当前用户
-        /// </summary>
-        /// <returns></returns>
         public static Base_User GetCurrentUser()
         {
             return GetCurrentUserFunc();
         }
 
-        /// <summary>
-        /// 检查登录
-        /// </summary>
-        /// <param name="loginName"></param>
-        /// <param name="passWord"></param>
-        /// <returns></returns>
         public Base_User LoginIn(string loginName, string passWord)
         {
             if (string.IsNullOrWhiteSpace(loginName) || string.IsNullOrWhiteSpace(passWord))

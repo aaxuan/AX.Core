@@ -14,19 +14,10 @@ namespace AX.Core.CommonModel
             Count = data.Count;
         }
 
-        /// <summary>
-        /// 当前Page数量
-        /// </summary>
         public int Count { get; set; }
 
-        /// <summary>
-        /// 总数量
-        /// </summary>
         public int TotalCount { get; set; }
 
-        /// <summary>
-        /// 数据
-        /// </summary>
         public List<T> Data { get; set; }
     }
 }

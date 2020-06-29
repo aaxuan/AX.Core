@@ -2,9 +2,6 @@
 
 namespace AX.Core.CommonModel
 {
-    /// <summary>
-    /// 基类
-    /// </summary>
     public class ResultMessage
     {
         public ResultMessage()
@@ -23,10 +20,6 @@ namespace AX.Core.CommonModel
         public string Message { get; set; }
     }
 
-    /// <summary>
-    /// 泛型 数据类型 返回信息
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
     public class ResultMessage<T> : ResultMessage
     {
         public ResultMessage() : base()
@@ -38,9 +31,6 @@ namespace AX.Core.CommonModel
         public T Data { get; set; }
     }
 
-    /// <summary>
-    /// 跳转 返回信息
-    /// </summary>
     public class RedirectResultMessage : ResultMessage
     {
         public RedirectResultMessage() : base()
