@@ -18,7 +18,8 @@
 使用 Business 内置逻辑
 
 
-= Business
+= Business		实验内容
+
 √ Cache			提供了统一管理全局内存缓存的能力。可以显示缓存注册名称，类型，创建时间，数量。
 √ CommonModel	提供一些基础的通用实体或框架实体。
 √ Config		提供读取 json 配置文件的能力。

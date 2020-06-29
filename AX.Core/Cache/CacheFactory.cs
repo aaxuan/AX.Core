@@ -25,7 +25,7 @@ namespace AX.Core.Cache
             return null;
         }
 
-        public static List<ICaChe> GetCaCheList()
+        public static List<ICaChe> GetAllCaCheList()
         {
             return _allCacheDict.AllToList();
         }
