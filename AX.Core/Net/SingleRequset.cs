@@ -25,7 +25,7 @@ namespace AX.Core.Net
         public SingleRequset()
         { }
 
-        public SingleRequset(string url, HttpMethod httpMethod)
+        public void Init(string url, HttpMethod httpMethod)
         {
             HttpWebRequest = null;
             HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
@@ -33,7 +33,7 @@ namespace AX.Core.Net
             HttpWebRequest.CookieContainer = CookieContainer;
         }
 
-        public SingleRequset(string url, string httpMethod)
+        public void Init(string url, string httpMethod)
         {
             HttpWebRequest = null;
             HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
