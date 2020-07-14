@@ -1,0 +1,85 @@
+﻿using Newtonsoft.Json;
+using System;
+using System.IO;
+using System.Net;
+using System.Text;
+
+namespace AX.Core.Net
+{
+    public class SingleRequset
+    {
+        private static readonly CookieContainer CookieContainer;
+
+        public static HttpWebRequest HttpWebRequest;
+        public static Encoding Encoding = Encoding.UTF8;
+
+        public enum HttpMethod
+        {
+            GET,
+            POST,
+        }
+
+        static SingleRequset()
+        { }
+
+        public SingleRequset()
+        { }
+
+        public SingleRequset(string url, HttpMethod httpMethod)
+        {
+            HttpWebRequest = null;
+            HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
+            HttpWebRequest.Method = httpMethod.ToString();
+            HttpWebRequest.CookieContainer = CookieContainer;
+        }
+
+        public SingleRequset(string url, string httpMethod)
+        {
+            HttpWebRequest = null;
+            HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
+            HttpWebRequest.Method = httpMethod;
+            HttpWebRequest.CookieContainer = CookieContainer;
+        }
+
+        public static void SetJsonData<T>(T data)
+        {
+            HttpWebRequest.ContentType = "application/json;charset=UTF-8";
+            var value = JsonConvert.SerializeObject(data);
+            var valueBytes = Encoding.GetBytes(value);
+            HttpWebRequest.ContentLength = valueBytes.Length;
+            Stream requsetStream = HttpWebRequest.GetRequestStream();
+            requsetStream.Write(valueBytes, 0, valueBytes.Length);
+            requsetStream.Close();
+        }
+
+        public static void SetFormData(string data)
+        {
+            //移除换行符
+            data = data.Replace("\r", string.Empty);
+            data = data.Replace("\n", string.Empty);
+            //编码
+            //arg = System.Web.HttpUtility.UrlEncode(arg);
+            HttpWebRequest.ContentType = "application/x-www-form-urlencoded";
+
+            var valueBytes = Encoding.GetBytes(data);
+            HttpWebRequest.ContentLength = valueBytes.Length;
+            Stream requsetStream = HttpWebRequest.GetRequestStream();
+            requsetStream.Write(valueBytes, 0, valueBytes.Length);
+            requsetStream.Close();
+        }
+
+        public static String RunGetResult()
+        {
+            var result = string.Empty;
+            var webResponse = HttpWebRequest.GetResponse() as HttpWebResponse;
+            if (webResponse != null)
+            {
+                using (StreamReader sr = new StreamReader(webResponse.GetResponseStream()))
+                {
+                    result = sr.ReadToEnd();
+                }
+            }
+            return result;
+        }
+    }
+}
