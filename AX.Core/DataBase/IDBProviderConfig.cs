@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace AX.Core.DataBase
 {
-    public interface IDBDialectConfig
+    public interface IDBProviderConfig
     {
         String LeftEscapeChar { get; }
 

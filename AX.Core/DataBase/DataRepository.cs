@@ -26,12 +26,12 @@ namespace AX.Core.DataBase
             switch (dataBaseType)
             {
                 case DataBaseType.None: return this;
-                case DataBaseType.MySql: return this.UseConfig(new MySqlDialectConfig());
+                case DataBaseType.MySql: return this.UseConfig(new MySqlProviderConfig());
                 default: return this;
             }
         }
 
-        public DataRepository UseConfig(IDBDialectConfig dBConfig)
+        public DataRepository UseConfig(IDBProviderConfig dBConfig)
         {
             this._dbConfig = dBConfig;
             this._sqlBuilder = new SqlBuilder(dBConfig.LeftEscapeChar, dBConfig.RightEscapeChar, dBConfig.DbParmChar);
@@ -42,7 +42,7 @@ namespace AX.Core.DataBase
 
         private DataBaseType _dataBaseType;
 
-        private IDBDialectConfig _dbConfig;
+        private IDBProviderConfig _dbConfig;
 
         private DbTransaction _dbTransaction;
 

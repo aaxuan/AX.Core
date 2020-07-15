@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AX.Core.DataBase.Configs
 {
-    internal class SQLSeverDialectConfig : IDBDialectConfig
+    internal class SQLSeverDialectConfig : IDBProviderConfig
     {
         public string LeftEscapeChar { get { return "["; } }
 

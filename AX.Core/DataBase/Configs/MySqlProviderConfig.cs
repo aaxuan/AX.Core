@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AX.Core.DataBase.Configs
 {
-    public class MySqlDialectConfig : IDBDialectConfig
+    public class MySqlProviderConfig : IDBProviderConfig
     {
         public string LeftEscapeChar { get { return "`"; } }
 
