@@ -8,7 +8,7 @@ namespace AX.Core.Net
 {
     public class SingleRequset
     {
-        private static readonly CookieContainer CookieContainer;
+        private static CookieContainer CookieContainer;
 
         public static HttpWebRequest HttpWebRequest;
         public static Encoding Encoding = Encoding.UTF8;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace AX.Core.DataBase.Configs
+namespace AX.Core.DataBase
 {
     public interface IDBDialectConfig
     {

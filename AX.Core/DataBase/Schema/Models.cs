@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using static AX.Core.DataBase.DBFactory;
 
-namespace AX.Core.DataBaseSchema
+namespace AX.Core.DataBase.Schema
 {
     [Serializable]
     public class SchemaDB

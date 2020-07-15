@@ -1,9 +1,5 @@
 ﻿using AX.Core.Business.DataModel;
-using AX.Core.DataBase;
-using MySql.Data.MySqlClient;
 using System;
-using System.Linq;
-using static AX.Core.DataBase.DBFactory;
 
 namespace NetCoreUseDemo
 {
@@ -30,27 +26,27 @@ namespace NetCoreUseDemo
             public String LastLoginTime { get; set; }
         }
 
-        private static DataRepository GetDataBase(AX.Core.DataBase.Schema.SchemaDB schemaDB)
-        {
-            return new DataRepository(new MySqlConnection(schemaDB.ConnectionString));
-        }
+        //private static DataRepository GetDataBase(SchemaDB schemaDB)
+        //{
+        //    return new DataRepository(new MySqlConnection(schemaDB.ConnectionString));
+        //}
 
         public void Test()
         {
-            var jsonconfig = new AX.Core.Config.JsonConfig("jsonconfig.json");
+            var jsonconfig = new AX.Core.Config.TinyJsonConfig("jsonconfig.json");
+            var b = jsonconfig.GetListValue<String>("testtext");
             jsonconfig.SetValue("aaaaaa", "qweqwe");
             jsonconfig.SetValue("bbb", "qweqwe");
             jsonconfig.SaveToFile();
-            
 
-            DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("CompanyConnectionString"), DataBaseType.MySql);
-            DBFactory.GetDataRepositoryFunc = GetDataBase;
+            //DBFactory.SetDB(DBFactory.DefaultDBKey, jsonconfig.GetValue<string>("CompanyConnectionString"), DataBaseType.MySql);
+            //DBFactory.GetDataRepositoryFunc = GetDataBase;
 
-            var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
-            var b = db.TestConnection();
-            var alldb = db.LoadDBSchemas();
-            var alltable = db.LoadDBSchemaTables(alldb.First().CodeName);
-            var allcolmun = db.LoadDBColmuns(alldb.First().CodeName, alltable.First().CodeName);
+            //var db = DBFactory.GetDataRepository(DBFactory.DefaultDBKey);
+            //var b = db.TestConnection();
+            //var alldb = db.LoadDBSchemas();
+            //var alltable = db.LoadDBSchemaTables(alldb.First().CodeName);
+            //var allcolmun = db.LoadDBColmuns(alldb.First().CodeName, alltable.First().CodeName);
 
             //db.SetSchemaByModel<DemoTable>(true);
             //var model = db.Insert<DemoTable>(new DemoTable() { CreateTime = DateTime.Now, isuse = true, money = 98.8M });
