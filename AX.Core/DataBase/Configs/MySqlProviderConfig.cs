@@ -32,7 +32,7 @@ namespace AX.Core.DataBase.Configs
             {
                 var item = propertyInfos[i];
                 result.Append($"{item.Name.ToLower()} {GetType(item)}");
-                if (i != propertyInfos.Count)
+                if (i != propertyInfos.Count - 1)
                 { result.Append($","); }
             }
             result.Append($"PRIMARY KEY({KeyName})");

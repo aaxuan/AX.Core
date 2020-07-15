@@ -8,7 +8,6 @@ namespace AX.Core.RunLog
         public void WriteFileLog(string msg)
         {
             var logPath = LogDirectoryPath + "\\" + $"log_{DateTime.Now.ToString("yyyy-mm-dd")}.log";
-
             StreamWriter sw = new StreamWriter(logPath, true);
             sw.WriteLine(CreateLogMsg(msg));
             sw.Close();

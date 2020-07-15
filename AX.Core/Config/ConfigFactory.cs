@@ -1,4 +1,5 @@
 ﻿using AX.Core.Cache;
+using AX.Core.CommonModel.Exceptions;
 using AX.Core.Extension;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,8 @@ namespace AX.Core.Config
             {
                 return _configCache[DefaultFileNamePath];
             }
-            return null;
+            else
+            { throw new AXWarringMesssageException($"[{_configCache.Name}] 缓存无 [{DefaultFileNamePath}] 值对象"); }
         }
 
         public static TinyJsonConfig GetConfig(string filePath)

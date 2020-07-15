@@ -409,16 +409,29 @@ namespace AX.Core.DataBase
         public List<SchemaDB> LoadDBSchemas()
         {
             var result = new List<SchemaDB>();
-            var dbNametb = GetDataTable(_dbConfig.GetLoadDBSchemasSql());
-            foreach (DataRow row in dbNametb.Rows)
+            if (string.IsNullOrWhiteSpace(_dbConfig.GetLoadDBSchemasSql()))
             {
                 var resultItem = new SchemaDB();
-                resultItem.CodeName = row[0].ToString();
-                resultItem.Description = row[0].ToString();
-                resultItem.DisplayName = row[0].ToString();
+                resultItem.CodeName = Connection.Database;
+                resultItem.Description = Connection.Database;
+                resultItem.DisplayName = Connection.Database;
                 resultItem.ConnectionString = Connection.ConnectionString;
                 resultItem.DBType = _dataBaseType;
                 result.Add(resultItem);
+            }
+            else
+            {
+                var dbNametb = GetDataTable(_dbConfig.GetLoadDBSchemasSql());
+                foreach (DataRow row in dbNametb.Rows)
+                {
+                    var resultItem = new SchemaDB();
+                    resultItem.CodeName = row[0].ToString();
+                    resultItem.Description = row[0].ToString();
+                    resultItem.DisplayName = row[0].ToString();
+                    resultItem.ConnectionString = Connection.ConnectionString;
+                    resultItem.DBType = _dataBaseType;
+                    result.Add(resultItem);
+                }
             }
             return result;
         }
@@ -468,7 +481,7 @@ namespace AX.Core.DataBase
             var exitSql = _dbConfig.GetTableExitSql(tableName, dbName);
             if (ExecuteScalar<int>(exitSql) <= 0)
             {
-                result.Append(GetCreateTableSqlByModel<T>(result));
+                result.Append(GetCreateTableSqlByModel<T>(null));
             }
             //判断字段是否存在
             else
