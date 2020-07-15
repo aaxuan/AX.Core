@@ -15,6 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="DataBase\Configs\OracleDialectConfig.cs" />
+    <Compile Remove="DataBase\Configs\PostgreSqlDialectConfig.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="DataBase\DataRepository.cs~RF42fc8f.TMP" />
   </ItemGroup>
 

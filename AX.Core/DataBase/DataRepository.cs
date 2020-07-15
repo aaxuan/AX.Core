@@ -27,6 +27,8 @@ namespace AX.Core.DataBase
             {
                 case DataBaseType.None: return this;
                 case DataBaseType.MySql: return this.UseConfig(new MySqlProviderConfig());
+                case DataBaseType.SqlLite: return this.UseConfig(new SqlLiteProviderConfig());
+
                 default: return this;
             }
         }

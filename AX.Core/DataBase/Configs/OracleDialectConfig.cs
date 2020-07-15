@@ -1,8 +1,8 @@
 ﻿namespace AX.Core.DataBase.Configs
 {
-    internal class OracleDialectConfig
-    {
-    }
+    //internal class OracleDialectConfig
+    //{
+    //}
 
     //	// Token: 0x1700007E RID: 126
     //	// (get) Token: 0x0600018F RID: 399 RVA: 0x00009EB5 File Offset: 0x000080B5

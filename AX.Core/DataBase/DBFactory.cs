@@ -8,7 +8,8 @@ namespace AX.Core.DataBase
         public enum DataBaseType
         {
             None = 0,
-            MySql = 1
+            MySql = 1,
+            SqlLite = 2,
         }
 
         public static readonly string DefaultDBKey = "BASE";
