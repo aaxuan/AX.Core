@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AX.Core.DataBase.Configs
 {
-    internal class SqlLiteProviderConfig : IDBProviderConfig
+    internal class SQLiteProviderConfig : IDBProviderConfig
     {
         //https://www.sqlite.org/lang_keywords.html
 

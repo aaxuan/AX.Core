@@ -27,7 +27,7 @@ namespace AX.Core.DataBase
             {
                 case DataBaseType.None: return this;
                 case DataBaseType.MySql: return this.UseConfig(new MySqlProviderConfig());
-                case DataBaseType.SqlLite: return this.UseConfig(new SqlLiteProviderConfig());
+                case DataBaseType.SqlLite: return this.UseConfig(new SQLiteProviderConfig());
 
                 default: return this;
             }
@@ -67,9 +67,7 @@ namespace AX.Core.DataBase
             var parmars = Regex.Matches(sql, regexStr);
 
             //无参数情况
-            if (parmars.Count <= 0)
-            { return; }
-
+            if (parmars.Count <= 0) { return; }
             //多参数一对象情况
             if (parmars.Count > 1 && args.Length == 1)
             {
@@ -96,7 +94,7 @@ namespace AX.Core.DataBase
                 DbParameter par = cmd.CreateParameter();
                 par.ParameterName = parm.Value.Substring(1, parm.Value.Length - 1);
                 par.Value = args[i];
-                par.DbType = _sqlBuilder.GetDbType(args[i]);
+                par.DbType = _sqlBuilder.GetDbType(args[i].GetType());
                 cmd.Parameters.Add(par);
             }
         }

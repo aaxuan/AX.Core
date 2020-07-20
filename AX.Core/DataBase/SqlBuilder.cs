@@ -186,40 +186,47 @@ namespace AX.Core.DataBase
 
         #endregion SQL拼接
 
-        public DbParameter GetParameter<T>(DbCommand cmd, T entity, PropertyInfo propertyInfo)
+        public IDataParameter GetParameter<T>(DbCommand cmd, T entity, PropertyInfo propertyInfo)
         {
             var result = cmd.CreateParameter();
             var value = propertyInfo.GetValue(entity, null);
 
             result.ParameterName = ParmChar + propertyInfo.Name;
-            result.DbType = GetDbType(value);
+            result.Direction = ParameterDirection.Input;
+            result.DbType = GetDbType(propertyInfo.PropertyType);
             result.Value = value;
             return result;
         }
 
-        public DbType GetDbType<T>(T value)
+        public DbType GetDbType(Type type)
         {
-            var result = new DbType();
-
-            if (value != null)
+            try
             {
-                if (value.GetType() == typeof(Int32) || value.GetType() == typeof(Int32?))
-                { result = DbType.Int32; }
-
-                if (value.GetType() == typeof(Decimal) || value.GetType() == typeof(Decimal?))
-                { result = DbType.Decimal; }
-
-                if (value.GetType() == typeof(DateTime) || value.GetType() == typeof(DateTime?))
-                { result = DbType.DateTime; }
-
-                if (value.GetType() == typeof(bool))
-                { result = DbType.Boolean; }
-
-                if (value.GetType() == typeof(string))
-                { result = DbType.String; }
+                switch (Type.GetTypeCode(type))
+                {
+                    case TypeCode.Boolean: return DbType.Boolean;
+                    case TypeCode.Char:
+                    case TypeCode.SByte:
+                    case TypeCode.Byte: return DbType.Byte;
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16: return DbType.Int16;
+                    case TypeCode.Int32:
+                    case TypeCode.UInt32: return DbType.Int32;
+                    case TypeCode.Int64:
+                    case TypeCode.UInt64: return DbType.Int64;
+                    case TypeCode.Single:
+                    case TypeCode.Double: return DbType.Double;
+                    case TypeCode.Decimal: return DbType.Decimal;
+                    case TypeCode.DateTime: return DbType.DateTime;
+                    case TypeCode.String: return DbType.String;
+                    default: break;
+                }
+                return DbType.String;
             }
-
-            return result;
+            catch (Exception ex)
+            {
+                throw new Exception($"创建 {type.Name} 参数时出错", ex);
+            }
         }
     }
 }

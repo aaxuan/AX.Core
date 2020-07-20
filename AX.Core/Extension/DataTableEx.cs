@@ -158,7 +158,7 @@ namespace AX.Core.Extension
                 foreach (var prop in propertyInfos)
                 {
                     //如果数据行没有该字段则忽略
-                    if (row[prop.Name] == null)
+                    if (row.Table.Columns.Contains(prop.Name) == false)
                     { continue; }
 
                     object value = null;

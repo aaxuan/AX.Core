@@ -1,7 +1,6 @@
 ﻿using AX.Core.Business.DataModel;
 using AX.Core.DataBase;
-using AX.Core.DataBase.Schema;
-using Microsoft.Data.Sqlite;
+using AX.Core.DataBase.Schema; 
 using System;
 using static AX.Core.DataBase.DBFactory;
 
@@ -32,7 +31,7 @@ namespace NetCoreUseDemo
 
         private static DataRepository GetDataBase(SchemaDB schemaDB)
         {
-            return new DataRepository(new SqliteConnection(schemaDB.ConnectionString));
+            return new DataRepository(new System.Data.SQLite.SQLiteConnection(schemaDB.ConnectionString));
         }
 
         public void Test()
@@ -51,6 +50,9 @@ namespace NetCoreUseDemo
             model.CreateTime2 = DateTime.Now;
             model.money2 = 100.02M;
             db.Update<DemoTable>(model);
+            Console.WriteLine(db.GetCount<DemoTable>());
+            var alldata = db.GetList<DemoTable>();
+
         }
     }
 }
