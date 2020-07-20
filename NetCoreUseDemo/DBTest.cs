@@ -1,6 +1,6 @@
 ﻿using AX.Core.Business.DataModel;
 using AX.Core.DataBase;
-using AX.Core.DataBase.Schema; 
+using AX.Core.DataBase.Schema;
 using System;
 using static AX.Core.DataBase.DBFactory;
 
@@ -8,21 +8,7 @@ namespace NetCoreUseDemo
 {
     public class DBTest
     {
-        public class DemoTable
-        {
-            public string Id { get; set; }
 
-            public DateTime CreateTime { get; set; }
-
-            public DateTime? CreateTime2 { get; set; }
-
-            public bool isuse { get; set; }
-
-            public decimal money { get; set; }
-
-            [AX.Core.DataBase.Schema.Attributes.Ignore]
-            public decimal? money2 { get; set; }
-        }
 
         public class User : Base_User
         {
@@ -52,7 +38,6 @@ namespace NetCoreUseDemo
             db.Update<DemoTable>(model);
             Console.WriteLine(db.GetCount<DemoTable>());
             var alldata = db.GetList<DemoTable>();
-
         }
     }
 }
