@@ -160,17 +160,23 @@ namespace AX.Core.Extension
                     //如果数据行没有该字段则忽略
                     if (row.Table.Columns.Contains(prop.Name) == false)
                     { continue; }
+                    //是否能写入
+                    if (prop.CanWrite == false)
+                    { continue; }
 
-                    object value = null;
-                    if (prop.PropertyType.ToString().Contains("System.Nullable"))
+                    if (row[prop.Name] != DBNull.Value)
                     {
-                        value = Convert.ChangeType(row[prop.Name], Nullable.GetUnderlyingType(prop.PropertyType));
+                        object value = null;
+                        if (prop.PropertyType.ToString().Contains("System.Nullable"))
+                        {
+                            value = Convert.ChangeType(row[prop.Name], Nullable.GetUnderlyingType(prop.PropertyType));
+                        }
+                        else
+                        {
+                            value = Convert.ChangeType(row[prop.Name], prop.PropertyType);
+                        }
+                        prop.SetValue(item, value, null);
                     }
-                    else
-                    {
-                        value = Convert.ChangeType(row[prop.Name], prop.PropertyType);
-                    }
-                    prop.SetValue(item, value, null);
                 }
 
                 result.Add(item);
