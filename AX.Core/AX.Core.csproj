@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.3.5</Version>
+    <Version>1.0.5.07211</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>基于 .Net standard 2.0.3 开发的通用基础类库</Description>
     <PackageProjectUrl>https://github.com/aaxuan/AX.Core</PackageProjectUrl>
@@ -12,6 +12,12 @@
     <UserSecretsId>bdc09f6e-756e-44e7-a81d-c38604e1dfc0</UserSecretsId>
     <Authors>AaXuan</Authors>
     <Company>AaXuan</Company>
+    <NeutralLanguage></NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>false</Optimize>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

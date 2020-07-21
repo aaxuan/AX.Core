@@ -27,10 +27,7 @@ namespace AX.Core.Net
 
         public void Init(string url, HttpMethod httpMethod)
         {
-            HttpWebRequest = null;
-            HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
-            HttpWebRequest.Method = httpMethod.ToString();
-            HttpWebRequest.CookieContainer = CookieContainer;
+            Init(url, httpMethod.ToString());
         }
 
         public void Init(string url, string httpMethod)
@@ -57,7 +54,7 @@ namespace AX.Core.Net
             //移除换行符
             data = data.Replace("\r", string.Empty);
             data = data.Replace("\n", string.Empty);
-            //编码
+            //编码参数
             //arg = System.Web.HttpUtility.UrlEncode(arg);
             HttpWebRequest.ContentType = "application/x-www-form-urlencoded";
 
