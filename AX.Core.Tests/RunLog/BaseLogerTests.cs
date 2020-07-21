@@ -1,15 +1,13 @@
-﻿using AX.Core.RunLog;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NetCoreUseDemo
+namespace AX.Core.RunLog.Tests
 {
-    public class LogTest
+    [TestClass()]
+    public class BaseLogerTests
     {
-        private static BaseLoger consoleLog { get; } = new ConsoleLoger();
-
-        public void Test()
+        [TestMethod()]
+        public void BaseLogerTest()
         {
-            consoleLog.Waring("开始日志类测试");
-
             BaseLoger fileloger = new FileLoger();
 
             fileloger.Info("测试信息");
@@ -23,8 +21,6 @@ namespace NetCoreUseDemo
             fileloger.Waring("警告信息");
             fileloger.Err("错误信息");
             fileloger.Line();
-
-            consoleLog.Waring("结束日志类测试");
         }
     }
 }
