@@ -37,39 +37,33 @@ namespace AX.Core.DataBase.Configs
 
         private string GetType(PropertyInfo item)
         {
-            var fieldType = string.Empty;
-            if (item.PropertyType.FullName == typeof(Boolean).FullName ||
-                item.PropertyType.FullName == typeof(bool).FullName ||
-                item.PropertyType.FullName == typeof(Byte).FullName ||
-                item.PropertyType.FullName == typeof(Int16).FullName ||
-                item.PropertyType.FullName == typeof(Int32).FullName ||
-                item.PropertyType.FullName == typeof(Int64).FullName ||
-                item.PropertyType.FullName == typeof(SByte).FullName ||
-                item.PropertyType.FullName == typeof(UInt16).FullName ||
-                item.PropertyType.FullName == typeof(UInt32).FullName ||
-                item.PropertyType.FullName == typeof(UInt64).FullName)
-            { fieldType = " INTEGER "; }
-            else if (item.PropertyType.FullName == typeof(Char).FullName ||
-                item.PropertyType.FullName == typeof(DateTime).FullName ||
-                item.PropertyType.FullName == typeof(DateTime?).FullName ||
-                item.PropertyType.FullName == typeof(decimal).FullName ||
-                item.PropertyType.FullName == typeof(decimal?).FullName ||
-                item.PropertyType.FullName == typeof(Decimal).FullName ||
-                item.PropertyType.FullName == typeof(Decimal?).FullName ||
-                item.PropertyType.FullName == typeof(DateTimeOffset).FullName ||
-                item.PropertyType.FullName == typeof(Guid).FullName ||
-                item.PropertyType.FullName == typeof(String).FullName ||
-                item.PropertyType.FullName == typeof(TimeSpan).FullName)
-            { fieldType = " TEXT "; }
-            else if (item.PropertyType.FullName == typeof(Byte[]).FullName)
-            { fieldType = " BLOB "; }
-            else if (item.PropertyType.FullName == typeof(Double).FullName ||
-                item.PropertyType.FullName == typeof(Single).FullName)
-            { fieldType = " real "; }
-            else
-            { fieldType = " 未匹配类型 "; }
+            switch (Type.GetTypeCode(item.PropertyType))
+            {
+                case TypeCode.Empty: break;
+                case TypeCode.Object: break;
+                case TypeCode.DBNull: break;
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.Boolean: return "INTEGER";
+                case TypeCode.String:
+                case TypeCode.Decimal:
+                case TypeCode.DateTime:
+                case TypeCode.Char: return "TEXT";
+                case TypeCode.Single:
+                case TypeCode.Double: return "REAL";
+                default: break;
+            }
 
-            return fieldType;
+            if (item.PropertyType.FullName == typeof(Byte[]).FullName)
+            { return "BLOB"; }
+
+            return "未匹配类型";
         }
 
         public string GetLoadDBColmunSql(string dbName, string tablename)

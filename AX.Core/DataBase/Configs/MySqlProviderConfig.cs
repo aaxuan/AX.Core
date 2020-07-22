@@ -49,35 +49,35 @@ namespace AX.Core.DataBase.Configs
 
         private string GetType(PropertyInfo item)
         {
-            //数值类
-            if (item.PropertyType.FullName == typeof(int).FullName)
-            { return "int(11)"; }
-            if (item.PropertyType.FullName == typeof(double).FullName)
-            { return "double"; }
-            if (item.PropertyType.FullName == typeof(decimal).FullName)
-            { return "decimal(10, 2)"; }
-            if (item.PropertyType.FullName == typeof(decimal?).FullName)
-            { return "decimal(10, 2)"; }
-
-            if (item.PropertyType.FullName == typeof(bool).FullName)
-            { return "bit(1)"; }
-
-            //时间
-            if (item.PropertyType.FullName == typeof(DateTime).FullName)
-            { return "datetime"; }
-            if (item.PropertyType.FullName == typeof(DateTime?).FullName)
-            { return "datetime"; }
-
-            //字符串
-            if (item.PropertyType.FullName == typeof(string).FullName)
+            switch (Type.GetTypeCode(item.PropertyType))
             {
-                var length = Reflection.PropertyInfoManage.GetMaxStringLength(item);
-                if (length <= 0)
-                { return "varchar(255)"; }
-                else
-                { return $"varchar({length})"; }
+                case TypeCode.Boolean: return "bit(1)";
+                case TypeCode.Byte: break;
+                case TypeCode.Char: break;
+                case TypeCode.DateTime: return "datetime";
+                case TypeCode.DBNull: break;
+                case TypeCode.Decimal: return "decimal(10, 2)";
+                case TypeCode.Double: return "double";
+                case TypeCode.Empty: break;
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64: return "int(11)";
+                case TypeCode.Object: break;
+                case TypeCode.SByte: break;
+                case TypeCode.Single: break;
+                case TypeCode.String:
+                    {
+                        var length = Reflection.PropertyInfoManage.GetMaxStringLength(item);
+                        if (length <= 0)
+                        { return "varchar(255)"; }
+                        else
+                        { return $"varchar({length})"; }
+                    }
+                case TypeCode.UInt16: break;
+                case TypeCode.UInt32: break;
+                case TypeCode.UInt64: break;
+                default: break;
             }
-
             return "未匹配类型";
         }
 
