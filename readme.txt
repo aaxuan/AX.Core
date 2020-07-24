@@ -7,8 +7,8 @@
 🎖 尽量覆盖 web/客户端 双端支持
 
 ⚠ 
-依赖包 System.ComponentModel.Annotations 4.7.0
-依赖包 Newtonsoft.Json 12.0.3
+依赖包 System.ComponentModel.Annotations >= 4.7.0
+依赖包 Newtonsoft.Json >= 12.0.3
 
 ⚠ 
 使用本类库请一定使用全局异常拦截，基础代码中极少使用 try，大多数参数不合法和意外情况会直接抛出异常。
