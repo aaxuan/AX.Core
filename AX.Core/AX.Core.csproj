@@ -23,6 +23,10 @@
   <ItemGroup>
     <Compile Remove="DataBase\Configs\OracleDialectConfig.cs" />
     <Compile Remove="DataBase\Configs\PostgreSqlDialectConfig.cs" />
+    <Compile Remove="Helper\ValidateCode.cs" />
+    <Compile Remove="Net\FTP.cs" />
+    <Compile Remove="Net\MultiThreadDownloader.cs" />
+    <Compile Remove="Net\RTP.cs" />
   </ItemGroup>
 
   <ItemGroup>
