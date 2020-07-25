@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AX.Core.Net
 {
-    public class SingleRequset
+    public static class SingleRequset
     {
         private static CookieContainer CookieContainer = new CookieContainer();
 
@@ -20,17 +20,14 @@ namespace AX.Core.Net
         }
 
         static SingleRequset()
-        { }
+        { } 
 
-        public SingleRequset()
-        { }
-
-        public void Init(string url, HttpMethod httpMethod)
+        public static void Init(string url, HttpMethod httpMethod)
         {
             Init(url, httpMethod.ToString());
         }
 
-        public void Init(string url, string httpMethod)
+        public static void Init(string url, string httpMethod)
         {
             HttpWebRequest = null;
             HttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
