@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace AX.Core.RunLog
 {
@@ -8,9 +9,25 @@ namespace AX.Core.RunLog
         {
         }
 
+        internal StringBuilder AllLog { get; set; } = new StringBuilder();
+
         internal string CreateLogMsg(string msg)
         {
-            return ($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] { msg }");
+            var result = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] { msg }";
+            if (UseLogLog) { AllLog.AppendLine(result); }
+            return (result);
+        }
+
+        public bool UseLogLog { get; set; } = false;
+
+        public String GetAllLog()
+        {
+            return AllLog.ToString();
+        }
+
+        public void ClearAllLog()
+        {
+            AllLog = new StringBuilder();
         }
 
         #region 子类实现
