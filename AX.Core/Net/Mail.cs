@@ -1,117 +1,96 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 
 namespace AX.Core.Net
 {
-    //服务器名称: outlook.office365.com
-    //端口: 993
-    //加密方法: TLS
-
-    //服务器名称: smtp.office365.com
-    //端口: 587
-    //加密方法: STARTTLS
-
     public class Mail
     {
-        private readonly SmtpClient _client;
-        private readonly string _fromName;
-        private readonly string _formAddress;
-
-        public Mail(string formAddress, string authCode, string fromName)
+        public enum MailServesEnum
         {
-            _client = new SmtpClient();
-            _client.Host = "smtp.qq.com";
-            _client.Port = 25;
-            _client.EnableSsl = true;
-            _client.UseDefaultCredentials = false;
-            _client.Credentials = new NetworkCredential(formAddress, authCode);
-            _formAddress = formAddress;
-            _fromName = fromName;
+            Netease163,
+            QQ,
         }
 
-        public void Send(string toAddress, string subject, string body, bool isHtml = true)
+        public Encoding Encoding { get; } = Encoding.UTF8;
+
+        private string FromAddress;
+        private string AuthCode;
+        private string SmtpServer;
+        private int SmtpPort;
+
+        public Mail()
+        { }
+
+        public void UseServersConfig(MailServesEnum mailServes)
         {
-            var message = new MailMessage();
-            message.SubjectEncoding = Encoding.UTF8;
-            message.BodyEncoding = Encoding.UTF8;
-            message.Priority = MailPriority.High;
-
-            //发送人
-            message.From = new MailAddress(_formAddress, _fromName);
-            //接受人
-            message.To.Add(toAddress);
-            message.Subject = subject;
-            message.Body = body;
-            message.IsBodyHtml = isHtml;
-
-            //发送
-            _client.Send(message);
-        }
-    }
-
-    public class EMail
-    {
-        private SmtpClient _client
-        {
-            get
+            switch (mailServes)
             {
-                SmtpClient client = new SmtpClient();
-                client.Host = "smtp.qq.com";
-                client.Port = 587;
-                client.EnableSsl = true;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.UseDefaultCredentials = true;
-                client.Credentials = new NetworkCredential(_formAddress, _authCode);
-                return client;
+                case MailServesEnum.Netease163: SmtpServer = "smtp.163.com"; break;
+                case MailServesEnum.QQ: SmtpServer = "smtp.qq.com"; SmtpPort = 587; break;
+                default: return;
             }
+            return;
         }
 
-        private string _formAddress { get; set; } = "1051664725@qq.com";
-
-        private string _fromName { get; set; } = "AIFund通知";
-
-        private string _authCode { get; set; } = "lntgucvqofsgbddj";
-
-        public void Send(string toAddress, string subject, string body)
+        public void SetAuth(string fromAddress, string authCode)
         {
-            var message = new MailMessage();
-            message.SubjectEncoding = Encoding.UTF8;
-            message.BodyEncoding = Encoding.UTF8;
-            message.Priority = MailPriority.High;
-
-            //发送人
-            message.From = new MailAddress(_formAddress, _fromName);
-            //接受人
-            message.To.Add(toAddress);
-            message.Subject = subject;
-            message.Body = body;
-            message.IsBodyHtml = false;
-
-            //发送
-            _client.Send(message);
+            FromAddress = fromAddress;
+            AuthCode = authCode;
         }
-    }
 
-    public class EMail2
-    {
-        public void Send(string email)
+        public void Send(string toAddress, string body, string subject = "系统通知")
         {
-            SmtpClient client = new SmtpClient("smtp.qq.com");
-            client.EnableSsl = true;
-            client.UseDefaultCredentials = false;
-            client.Credentials = new System.Net.NetworkCredential("1051664725@qq.com", "lntgucvqofsgbddj");
+            string smtpServer = SmtpServer;
 
-            MailAddress from = new MailAddress("1051664725@qq.com", "显示名称", Encoding.UTF8);//初始化发件人
+            SmtpClient smtpClient = null;
+            if (SmtpPort <= 0)
+            { smtpClient = new SmtpClient(smtpServer); }
+            else
+            { smtpClient = new SmtpClient(smtpServer, SmtpPort); }
 
-            MailAddress to = new MailAddress(email, "", Encoding.UTF8);//初始化收件人
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(FromAddress, AuthCode);
+            smtpClient.EnableSsl = true;
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
 
-            //设置邮件内容
-            MailMessage message = new MailMessage(from, to);
-            message.Body = "asdasdasdasdasd";
+            var mail = new MailMessage(FromAddress, toAddress);
+            mail.Subject = subject;
+            mail.BodyEncoding = Encoding;
+            mail.IsBodyHtml = true;
+            mail.Body = body;
 
-            //发送邮件
-            client.Send(message);
+            smtpClient.Send(mail);
+        }
+
+        public void BatchSend(List<string> toAddress, string body, string subject = "系统通知")
+        {
+            string smtpServer = SmtpServer;
+
+            SmtpClient smtpClient = null;
+            if (SmtpPort <= 0)
+            { smtpClient = new SmtpClient(smtpServer); }
+            else
+            { smtpClient = new SmtpClient(smtpServer, SmtpPort); }
+
+            smtpClient.UseDefaultCredentials = false;
+            smtpClient.Credentials = new NetworkCredential(FromAddress, AuthCode);
+            smtpClient.EnableSsl = true;
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+            var mail = new MailMessage();
+            mail.From = new MailAddress(FromAddress);
+            foreach (var item in toAddress)
+            {
+                mail.To.Add(item);
+            }
+            mail.Subject = subject;
+            mail.BodyEncoding = Encoding;
+            mail.IsBodyHtml = true;
+            mail.Body = body;
+
+            smtpClient.Send(mail);
         }
     }
 }

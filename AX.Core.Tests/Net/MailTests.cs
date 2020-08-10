@@ -8,14 +8,11 @@ namespace AX.Core.Net.Tests
         [TestMethod()]
         public void MailTest()
         {
-            var mail = new AX.Core.Net.Mail("1051664725@qq.com", "lntgucvqofsgbddj", "Core测试");
-            //mail.Send("1051664725@qq.com", "Core测试", "测试信息,测试信息,测试信息,v,测试信息,v,,v测试信息", false);
-
-            var email = new EMail();
-            //email.Send("1051664725@qq.com", "Core测试", "测试信息,测试信息,测试信息,v,测试信息,v,,v测试信息");
-
-            var email2 = new EMail2();
-            email2.Send("1051664725@qq.com");
+            var mail = new Mail();
+            mail.UseServersConfig(Mail.MailServesEnum.Netease163);
+            mail.SetAuth("acuxuan@163.com", "");
+            mail.Send("1051664725@qq.com", "<h1>测试信息,测试信息,测试信息,测试信息,测试信息</h1>");
+            var b = 1;
         }
     }
 }

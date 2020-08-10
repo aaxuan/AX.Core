@@ -2,7 +2,6 @@
 using AX.Core.CommonModel.Exceptions;
 using AX.Core.Extension;
 using System;
-using System.Collections.Generic;
 
 namespace AX.Core.Config
 {
@@ -42,11 +41,6 @@ namespace AX.Core.Config
                 return _configCache[filePath];
             }
             return null;
-        }
-
-        public static List<TinyJsonConfig> GetCaCheList()
-        {
-            return _configCache.AllToList();
         }
     }
 }
