@@ -10,8 +10,8 @@ namespace AX.Core.Net.Tests
         {
             var mail = new Mail();
             mail.UseServersConfig(Mail.MailServesEnum.Netease163);
-            mail.SetAuth("acuxuan@163.com", "");
-            mail.Send("1051664725@qq.com", "<h1>测试信息,测试信息,测试信息,测试信息,测试信息</h1>");
+            mail.SetAuth("", "");
+            mail.Send("", "<h1>测试信息,测试信息,测试信息,测试信息,测试信息</h1>");
             var b = 1;
         }
     }
