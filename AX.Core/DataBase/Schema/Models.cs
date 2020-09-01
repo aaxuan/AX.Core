@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using static AX.Core.DataBase.DBFactory;
 
 namespace AX.Core.DataBase.Schema
@@ -51,6 +52,9 @@ namespace AX.Core.DataBase.Schema
 
         [DisplayName("包含列")]
         public List<SchemaColmun> Colmuns { get; set; }
+
+        [DisplayName("主键列")]
+        public SchemaColmun PrimaryKey { get { return Colmuns.FirstOrDefault(p => p.IsPrimaryKey == true); } }
     }
 
     [Serializable]

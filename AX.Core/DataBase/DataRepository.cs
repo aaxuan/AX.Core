@@ -225,7 +225,7 @@ namespace AX.Core.DataBase
         {
             var sb = new StringBuilder();
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { sb = _sqlBuilder.BuildDeleteTableSqlNoWhere(SchemaProvider.GetTableName<T>()); }
+            { sql = _sqlBuilder.BuildDeleteTableSqlNoWhere(SchemaProvider.GetTableName<T>()) + sql; }
             var result = ExecuteNonQuery(sb.Append(sql).ToString(), args);
             return result;
         }
@@ -275,7 +275,7 @@ namespace AX.Core.DataBase
         {
             var sb = new StringBuilder();
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { sb = _sqlBuilder.BuildSelectCountSqlNoWhere(SchemaProvider.GetTableName<T>()); }
+            { sql = _sqlBuilder.BuildSelectCountSqlNoWhere(SchemaProvider.GetTableName<T>()) + sql; }
             var result = ExecuteScalar<long>(sb.Append(sql).ToString(), args);
             return result;
         }
@@ -300,7 +300,7 @@ namespace AX.Core.DataBase
         public List<T> GetList<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
+            { sql = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()) + sql; }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>();
         }
@@ -308,7 +308,7 @@ namespace AX.Core.DataBase
         public T SingleOrDefault<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
+            { sql = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()) + sql; }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>().SingleOrDefault();
         }
@@ -328,7 +328,7 @@ namespace AX.Core.DataBase
         public T FirstOrDefault<T>(string sql, params object[] args)
         {
             if (sql.StartsWith("WHERE", StringComparison.InvariantCultureIgnoreCase))
-            { var sb = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()); }
+            { sql = _sqlBuilder.BuildSelectSqlNoWhere<T>(SchemaProvider.GetTableName<T>(), SchemaProvider.GetSelectProperties<T>()) + sql; }
             var datetable = GetDataTable(sql, args);
             return datetable.ToList<T>().FirstOrDefault();
         }

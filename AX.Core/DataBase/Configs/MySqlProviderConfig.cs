@@ -35,7 +35,7 @@ namespace AX.Core.DataBase.Configs
                 if (i != propertyInfos.Count)
                 { result.Append($","); }
             }
-            result.Append($"PRIMARY KEY({KeyName})");
+            result.Append($",PRIMARY KEY({KeyName})");
             result.Append($")");
             result.Append($"ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '{tableName}';");
 
