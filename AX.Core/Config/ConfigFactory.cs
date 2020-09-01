@@ -1,46 +1,37 @@
 ﻿using AX.Core.Cache;
 using AX.Core.CommonModel.Exceptions;
 using AX.Core.Extension;
-using System;
+using System.Collections.Generic;
 
 namespace AX.Core.Config
 {
     public class ConfigFactory
     {
-        private static readonly MemoryCache<TinyJsonConfig> _configCache;
-        public static readonly String DefaultFileNamePath = "jsonconfig.json";
+        private static readonly MemoryCache<IConfig> AllConfigDict = new MemoryCache<IConfig>("全局配置管理对象");
 
-        static ConfigFactory()
+        public static IConfigT<T> CreateConfig<T>(string configName, string filepath) where T : class
         {
-            _configCache = CacheFactory.CreateCache<TinyJsonConfig>("配置实例缓存") as MemoryCache<TinyJsonConfig>;
+            configName.CheckIsNullOrWhiteSpace();
+            if (AllConfigDict.ContainsKey(configName))
+            { throw new AXWarringMesssageException($"{configName} 已存在该配置键值"); }
+            var cache = new JsonConfig<T>(configName, filepath);
+            AllConfigDict[configName] = cache;
+            return cache;
         }
 
-        public static TinyJsonConfig CreateConfig(string filePath)
+        public static IConfigT<T> GetCache<T>(string cacheName) where T : class
         {
-            filePath.CheckIsNullOrWhiteSpace();
-            var config = new TinyJsonConfig(filePath);
-            _configCache[filePath] = config;
-            return config;
-        }
-
-        public static TinyJsonConfig GetDefaultConfig()
-        {
-            if (_configCache.ContainsKey(DefaultFileNamePath))
+            cacheName.CheckIsNullOrWhiteSpace();
+            if (AllConfigDict.ContainsKey(cacheName))
             {
-                return _configCache[DefaultFileNamePath];
-            }
-            else
-            { throw new AXWarringMesssageException($"[{_configCache.Name}] 缓存无 [{DefaultFileNamePath}] 值对象"); }
-        }
-
-        public static TinyJsonConfig GetConfig(string filePath)
-        {
-            filePath.CheckIsNullOrWhiteSpace();
-            if (_configCache.ContainsKey(filePath))
-            {
-                return _configCache[filePath];
+                return AllConfigDict[cacheName] as IConfigT<T>;
             }
             return null;
+        }
+
+        public static List<IConfig> GetAllCaCheList()
+        {
+            return AllConfigDict.AllToList();
         }
     }
 }

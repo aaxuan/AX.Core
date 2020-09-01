@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AX.Core.Config
 {
-    internal class JsonConfig<T> : IConfig<T> where T : class
+    internal class JsonConfig<T> : IConfigT<T> where T : class
     {
         public static T Current { get; set; }
 

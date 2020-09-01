@@ -2,20 +2,24 @@
 
 namespace AX.Core.Config
 {
-    public interface IConfig<T> where T : class
+    public interface IConfig
     {
-        string Name { get; }
+        string CaCheValueTypeName { get; }
 
         string FilePath { get; }
 
-        DateTime? LoadTime { get; }
-
         DateTime? LastSaveTime { get; }
 
-        String CaCheValueTypeName { get; }
+        DateTime? LoadTime { get; }
+
+        string Name { get; }
 
         bool Load();
 
         bool Save();
+    }
+
+    public interface IConfigT<T> : IConfig where T : class
+    {
     }
 }
