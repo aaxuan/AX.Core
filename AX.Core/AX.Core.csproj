@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <OutputType>Library</OutputType>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>1.0.5.07251</Version>
+    <Version>1.0.5.09012</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>基于 .Net standard 2.0.3 开发的通用基础类库</Description>
     <PackageProjectUrl>https://github.com/aaxuan/AX.Core</PackageProjectUrl>
