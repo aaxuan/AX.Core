@@ -8,7 +8,7 @@ namespace AX.Core.Cache
 {
     public class MemoryCache<T> : ICaChe
     {
-        private ConcurrentDictionary<string, T> _dataDict { get; set; } = new ConcurrentDictionary<string, T>();
+        private readonly ConcurrentDictionary<string, T> Dict = new ConcurrentDictionary<string, T>();
 
         public MemoryCache(string name)
         {
@@ -24,7 +24,7 @@ namespace AX.Core.Cache
 
         public string Name { get; private set; }
 
-        public int Count { get { return _dataDict.Count; } }
+        public int Count { get { return Dict.Count; } }
 
         public DateTime CreateTime { get; private set; }
 
@@ -34,23 +34,20 @@ namespace AX.Core.Cache
 
         public T this[string key]
         {
-            //实现索引器的get方法
             get
             {
-                return _dataDict[key];
+                return Dict[key];
             }
-
-            //实现索引器的set方法
             set
             {
-                _dataDict[key] = value;
+                Dict[key] = value;
             }
         }
 
         public bool Add(string key, T value)
         {
             key.CheckIsNullOrWhiteSpace();
-            _dataDict[key] = value;
+            Dict[key] = value;
             return true;
         }
 
@@ -65,15 +62,15 @@ namespace AX.Core.Cache
 
         public bool Clear()
         {
-            _dataDict.Clear();
+            Dict.Clear();
             return true;
         }
 
         public T Get(string key)
         {
-            if (_dataDict.ContainsKey(key))
+            if (Dict.ContainsKey(key))
             {
-                return _dataDict[key];
+                return Dict[key];
             }
             return default(T);
         }
@@ -91,18 +88,18 @@ namespace AX.Core.Cache
         public bool Remove(string key)
         {
             var obj = default(T);
-            _dataDict.TryRemove(key, out obj);
+            Dict.TryRemove(key, out obj);
             return true;
         }
 
         public bool ContainsKey(string key)
         {
-            return _dataDict.ContainsKey(key);
+            return Dict.ContainsKey(key);
         }
 
         public List<T> AllToList()
         {
-            return _dataDict.Values.ToList();
+            return Dict.Values.ToList();
         }
     }
 }

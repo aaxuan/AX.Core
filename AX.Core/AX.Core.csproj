@@ -22,6 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Business\**" />
+    <EmbeddedResource Remove="Business\**" />
+    <None Remove="Business\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="DataBase\Configs\OracleDialectConfig.cs" />
     <Compile Remove="DataBase\Configs\PostgreSqlDialectConfig.cs" />
     <Compile Remove="Extension\IDataReaderEx.cs" />
