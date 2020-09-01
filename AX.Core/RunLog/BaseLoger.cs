@@ -3,6 +3,9 @@ using System.Text;
 
 namespace AX.Core.RunLog
 {
+    //https://www.cnblogs.com/emrys5/p/flashlog.html
+    //https://www.cnblogs.com/xcj26/p/6037808.html
+
     public abstract class BaseLoger
     {
         public BaseLoger()
