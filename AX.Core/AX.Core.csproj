@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="DataBaseSchema\SchemaManager.cs~RF2b38f843.TMP" />
     <None Remove="DataBase\DataRepository.cs~RF42fc8f.TMP" />
   </ItemGroup>
 
