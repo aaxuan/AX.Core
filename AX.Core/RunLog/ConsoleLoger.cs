@@ -1,38 +1,44 @@
-﻿using System;
+﻿using AX.Core.Extension;
+using System;
 
 namespace AX.Core.RunLog
 {
-    public class ConsoleLoger : BaseLoger
+    public class ConsoleLoger : ILoger
     {
-        public override void Info(string msg)
+        public ConsoleLoger(string name)
+        {
+            name.CheckIsNullOrWhiteSpace();
+            Name = name;
+        }
+
+        public string Name { get; private set; }
+
+        public void Debug(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine(CreateLogMsg(msg));
+            Console.WriteLine(GlobalLogManager.CreateMessage(LogLevel.Debug, msg));
             Console.ResetColor();
         }
 
-        public override void Err(string msg)
+        public void Error(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(CreateLogMsg(msg));
+            Console.WriteLine(GlobalLogManager.CreateMessage(LogLevel.Error, msg));
             Console.ResetColor();
         }
 
-        public override void Waring(string msg)
+        public void Info(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(GlobalLogManager.CreateMessage(LogLevel.Info, msg));
+            Console.ResetColor();
+        }
+
+        public void Waring(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(CreateLogMsg(msg));
+            Console.WriteLine(GlobalLogManager.CreateMessage(LogLevel.Waring, msg));
             Console.ResetColor();
-        }
-
-        public override void Line()
-        {
-            Console.WriteLine(CreateLogMsg($"---------- ---------- ---------- ---------- ---------- ----------"));
-        }
-
-        public override void EmptyLine()
-        {
-            Console.WriteLine(string.Empty);
         }
     }
 }
