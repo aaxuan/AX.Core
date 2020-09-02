@@ -1,29 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Reflection;
 
-namespace AX.Core.DataBase
-{
-    public interface IDBProviderConfig
-    {
-        String LeftEscapeChar { get; }
+//namespace AX.Core.DataBase
+//{
+//    public interface IDBProviderConfig
+//    {
+//        String LeftEscapeChar { get; }
 
-        String RightEscapeChar { get; }
+//        String RightEscapeChar { get; }
 
-        String DbParmChar { get; }
+//        String DbParmChar { get; }
 
-        String GetTableExitSql(String tableName, String dataBaseName);
+//        String GetTableExitSql(String tableName, String dataBaseName);
 
-        String GetFiledExitSql(String fieldName, String tableName, String dataBaseName);
+//        String GetFiledExitSql(String fieldName, String tableName, String dataBaseName);
 
-        String GetCreateTableSql(String tableName, String KeyName, List<PropertyInfo> propertyInfos);
+//        String GetCreateTableSql(String tableName, String KeyName, List<PropertyInfo> propertyInfos);
 
-        String GetCreateFieldSql(String tableName, PropertyInfo item);
-
-        string GetLoadDBSchemasSql();
-
-        string GetLoadDBTableSql(string dbName);
-
-        string GetLoadDBColmunSql(string dbName, string tablename);
-    }
-}
+//        String GetCreateFieldSql(String tableName, PropertyInfo item);
+//    }
+//}

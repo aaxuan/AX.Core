@@ -23,13 +23,17 @@
 
   <ItemGroup>
     <Compile Remove="Business\**" />
+    <Compile Remove="DataBase\Configs\**" />
     <EmbeddedResource Remove="Business\**" />
+    <EmbeddedResource Remove="DataBase\Configs\**" />
     <None Remove="Business\**" />
+    <None Remove="DataBase\Configs\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="DataBase\Configs\OracleDialectConfig.cs" />
-    <Compile Remove="DataBase\Configs\PostgreSqlDialectConfig.cs" />
+    <Compile Remove="DataBase\DataRepository.cs" />
+    <Compile Remove="DataBase\IDBProviderConfig.cs" />
+    <Compile Remove="DataBase\SqlBuilder.cs" />
     <Compile Remove="Extension\IDataReaderEx.cs" />
     <Compile Remove="Helper\ValidateCode.cs" />
     <Compile Remove="Net\FTP.cs" />
@@ -42,6 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
