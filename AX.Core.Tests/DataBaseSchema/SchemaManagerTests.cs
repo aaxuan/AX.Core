@@ -8,8 +8,9 @@ namespace AX.Core.DataBaseSchema.Tests
         [TestMethod()]
         public void GetSchemaProviderTest()
         {
+            //mysql
             var provider = SchemaManager.GetSchemaProvider(DataBase.DataBaseType.MySql);
-            var conn = new MySql.Data.MySqlClient.MySqlConnection("server=localhost;userid=root;pwd=123qwe;database=test;sslmode=none;");
+            var conn = new MySql.Data.MySqlClient.MySqlConnection("server=localhost;userid=root;pwd=;database=test;sslmode=none;");
             var dbs = provider.LoadSchemaDBs(conn);
             foreach (var db in dbs)
             {
