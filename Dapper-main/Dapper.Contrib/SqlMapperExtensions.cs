@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Collections.Concurrent;
 using System.Reflection.Emit;
+using System.Text;
 using System.Threading;
-
 using Dapper;
 
 namespace Dapper.Contrib.Extensions
@@ -46,6 +45,7 @@ namespace Dapper.Contrib.Extensions
         /// </summary>
         /// <param name="connection">The connection to get a database type name from.</param>
         public delegate string GetDatabaseTypeDelegate(IDbConnection connection);
+
         /// <summary>
         /// The function to get a a table name from a given <see cref="Type"/>
         /// </summary>
@@ -60,6 +60,7 @@ namespace Dapper.Contrib.Extensions
         private static readonly ConcurrentDictionary<RuntimeTypeHandle, string> TypeTableName = new ConcurrentDictionary<RuntimeTypeHandle, string>();
 
         private static readonly ISqlAdapter DefaultAdapter = new SqlServerAdapter();
+
         private static readonly Dictionary<string, ISqlAdapter> AdapterDictionary
             = new Dictionary<string, ISqlAdapter>(6)
             {
@@ -156,10 +157,10 @@ namespace Dapper.Contrib.Extensions
         }
 
         /// <summary>
-        /// Returns a single entity by a single id from table "Ts".  
+        /// Returns a single entity by a single id from table "Ts".
         /// Id must be marked with [Key] attribute.
         /// Entities created from interfaces are tracked/intercepted for changes and used by the Update() extension
-        /// for optimal performance. 
+        /// for optimal performance.
         /// </summary>
         /// <typeparam name="T">Interface or type to create and populate</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -285,7 +286,7 @@ namespace Dapper.Contrib.Extensions
             }
             else
             {
-                //NOTE: This as dynamic trick falls back to handle both our own Table-attribute as well as the one in EntityFramework 
+                //NOTE: This as dynamic trick falls back to handle both our own Table-attribute as well as the one in EntityFramework
                 var tableAttrName =
                     type.GetCustomAttribute<TableAttribute>(false)?.Name
                     ?? (type.GetCustomAttributes(false).FirstOrDefault(attr => attr.GetType().Name == "TableAttribute") as dynamic)?.Name;
@@ -640,7 +641,7 @@ namespace Dapper.Contrib.Extensions
 
             private static void CreateProperty<T>(TypeBuilder typeBuilder, string propertyName, Type propType, MethodInfo setIsDirtyMethod, bool isIdentity)
             {
-                //Define the field and the property 
+                //Define the field and the property
                 var field = typeBuilder.DefineField("_" + propertyName, propType, FieldAttributes.Private);
                 var property = typeBuilder.DefineProperty(propertyName,
                                                System.Reflection.PropertyAttributes.None,
@@ -789,6 +790,7 @@ public partial interface ISqlAdapter
     /// <param name="sb">The string builder  to append to.</param>
     /// <param name="columnName">The column name.</param>
     void AppendColumnName(StringBuilder sb, string columnName);
+
     /// <summary>
     /// Adds a column equality to a parameter.
     /// </summary>
