@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AX.Core.DataBase
 {
-    class DapperDataRepository
+    public class DapperDataRepository
     {
     }
 }

@@ -9,7 +9,9 @@ namespace AX.Core.DataBase
         public static IDataRepository GetDataRepository(DbConnection dbConnection)
         {
             dbConnection.CheckIsNull();
-            if (AxCoreGlobalSettings.DataBaseUseDapper) { }
+            if (AxCoreGlobalSettings.DataBaseUseDapper)
+            {
+            }
             throw new NotSupportedException();
         }
     }

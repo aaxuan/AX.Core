@@ -4,6 +4,6 @@
     {
         None = 0,
         MySql = 1,
-        SqlLite = 2,
+        SQLite = 2,
     }
 }

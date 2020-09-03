@@ -24,10 +24,13 @@
   <ItemGroup>
     <Compile Remove="Business\**" />
     <Compile Remove="DataBase\Configs\**" />
+    <Compile Remove="DataBase\OldCode\**" />
     <EmbeddedResource Remove="Business\**" />
     <EmbeddedResource Remove="DataBase\Configs\**" />
+    <EmbeddedResource Remove="DataBase\OldCode\**" />
     <None Remove="Business\**" />
     <None Remove="DataBase\Configs\**" />
+    <None Remove="DataBase\OldCode\**" />
   </ItemGroup>
 
   <ItemGroup>
