@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
-using Dapper;
 
 namespace Dapper.Contrib.Extensions
 {
@@ -17,7 +16,7 @@ namespace Dapper.Contrib.Extensions
     public static partial class SqlMapperExtensions
     {
         /// <summary>
-        /// Defined a proxy object with a possibly dirty state.
+        /// 定义可能处于脏状态的代理对象
         /// </summary>
         public interface IProxy //must be kept public
         {
@@ -28,26 +27,13 @@ namespace Dapper.Contrib.Extensions
         }
 
         /// <summary>
-        /// Defines a table name mapper for getting table names from types.
-        /// </summary>
-        public interface ITableNameMapper
-        {
-            /// <summary>
-            /// Gets a table name from a given <see cref="Type"/>.
-            /// </summary>
-            /// <param name="type">The <see cref="Type"/> to get a name from.</param>
-            /// <returns>The table name for the given <paramref name="type"/>.</returns>
-            string GetTableName(Type type);
-        }
-
-        /// <summary>
-        /// The function to get a database type from the given <see cref="IDbConnection"/>.
+        /// 从给定的数据库中获取数据库类型的函数<see cref="IDbConnection"/>.
         /// </summary>
         /// <param name="connection">The connection to get a database type name from.</param>
         public delegate string GetDatabaseTypeDelegate(IDbConnection connection);
 
         /// <summary>
-        /// The function to get a a table name from a given <see cref="Type"/>
+        /// 从给定的表中获取表名的函数<see cref="Type"/>
         /// </summary>
         /// <param name="type">The <see cref="Type"/> to get a table name for.</param>
         public delegate string TableNameMapperDelegate(Type type);
@@ -61,8 +47,7 @@ namespace Dapper.Contrib.Extensions
 
         private static readonly ISqlAdapter DefaultAdapter = new SqlServerAdapter();
 
-        private static readonly Dictionary<string, ISqlAdapter> AdapterDictionary
-            = new Dictionary<string, ISqlAdapter>(6)
+        private static readonly Dictionary<string, ISqlAdapter> AdapterDictionary = new Dictionary<string, ISqlAdapter>(6)
             {
                 ["sqlconnection"] = new SqlServerAdapter(),
                 ["sqlceconnection"] = new SqlCeServerAdapter(),
@@ -157,10 +142,9 @@ namespace Dapper.Contrib.Extensions
         }
 
         /// <summary>
-        /// Returns a single entity by a single id from table "Ts".
-        /// Id must be marked with [Key] attribute.
-        /// Entities created from interfaces are tracked/intercepted for changes and used by the Update() extension
-        /// for optimal performance.
+        /// 通过表“Ts”中的单个id返回单个实体。
+        /// Id必须用[Key]属性标记。
+        /// 从接口创建的实体将被跟踪/拦截变更，并由Update()扩展使用以获得最佳性能。
         /// </summary>
         /// <typeparam name="T">Interface or type to create and populate</typeparam>
         /// <param name="connection">Open SqlConnection</param>
@@ -695,72 +679,6 @@ namespace Dapper.Contrib.Extensions
                 typeBuilder.DefineMethodOverride(currSetPropMthdBldr, setMethod);
             }
         }
-    }
-
-    /// <summary>
-    /// Defines the name of a table to use in Dapper.Contrib commands.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class TableAttribute : Attribute
-    {
-        /// <summary>
-        /// Creates a table mapping to a specific name for Dapper.Contrib commands
-        /// </summary>
-        /// <param name="tableName">The name of this table in the database.</param>
-        public TableAttribute(string tableName)
-        {
-            Name = tableName;
-        }
-
-        /// <summary>
-        /// The name of the table in the database
-        /// </summary>
-        public string Name { get; set; }
-    }
-
-    /// <summary>
-    /// Specifies that this field is a primary key in the database
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class KeyAttribute : Attribute
-    {
-    }
-
-    /// <summary>
-    /// Specifies that this field is a explicitly set primary key in the database
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ExplicitKeyAttribute : Attribute
-    {
-    }
-
-    /// <summary>
-    /// Specifies whether a field is writable in the database.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class WriteAttribute : Attribute
-    {
-        /// <summary>
-        /// Specifies whether a field is writable in the database.
-        /// </summary>
-        /// <param name="write">Whether a field is writable in the database.</param>
-        public WriteAttribute(bool write)
-        {
-            Write = write;
-        }
-
-        /// <summary>
-        /// Whether a field is writable in the database.
-        /// </summary>
-        public bool Write { get; }
-    }
-
-    /// <summary>
-    /// Specifies that this is a computed column.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ComputedAttribute : Attribute
-    {
     }
 }
 

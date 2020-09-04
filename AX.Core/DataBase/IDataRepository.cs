@@ -11,6 +11,8 @@ namespace AX.Core.DataBase
 
         DbConnection Connection { get; }
 
+        DbTransaction Transaction { get; }
+
         #endregion 属性
 
         #region 事务
@@ -25,9 +27,9 @@ namespace AX.Core.DataBase
 
         bool TestConnection();
 
-        int ExecuteNonQuery(string sql, params object[] args);
+        int ExecuteNonQuery(string sql, params dynamic[] args);
 
-        T ExecuteScalar<T>(string sql, params object[] args);
+        T ExecuteScalar<T>(string sql, params dynamic[] args);
 
         void Save<T>(T entity);
 
@@ -43,9 +45,9 @@ namespace AX.Core.DataBase
 
         int Delete<T>(T entity);
 
-        int Delete<T>(object PrimaryKey);
+        int Delete<T>(dynamic PrimaryKey);
 
-        int Delete<T>(string sql, params object[] args);
+        int Delete<T>(string sql, params dynamic[] args);
 
         #endregion 删
 
@@ -59,27 +61,25 @@ namespace AX.Core.DataBase
 
         #region 查
 
-        bool IsExists<T>(object id);
+        bool IsExists<T>(dynamic PrimaryKey);
 
-        bool IsExists<T>(string sql, params object[] args);
+        bool IsExists<T>(string sql, params dynamic[] args);
 
         int GetCount<T>();
 
-        int GetCount<T>(string sql, params object[] args);
+        int GetCount<T>(string sql, params dynamic[] args);
 
-        T FirstOrDefault<T>(string sql, params object[] args);
+        T FirstOrDefault<T>(string sql, params dynamic[] args);
 
-        T FirstOrDefaultById<T>(object id);
+        T FirstOrDefaultById<T>(dynamic PrimaryKey);
 
-        T SingleOrDefault<T>(string sql, params object[] args);
+        T SingleOrDefault<T>(string sql, params dynamic[] args);
 
-        T SingleOrDefaultById<T>(object id);
+        List<T> GetAll<T>();
 
-        List<T> GetList<T>();
+        List<T> GetList<T>(string sql, params dynamic[] args);
 
-        List<T> GetList<T>(string sql, params object[] args);
-
-        DataTable GetDataTable(string sql, params object[] args);
+        DataTable GetDataTable(string sql, params dynamic[] args);
 
         #endregion 查
 

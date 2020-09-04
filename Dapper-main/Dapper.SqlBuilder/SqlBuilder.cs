@@ -99,8 +99,7 @@ namespace Dapper
             }
         }
 
-        public Template AddTemplate(string sql, dynamic parameters = null) =>
-            new Template(this, sql, parameters);
+        public Template AddTemplate(string sql, dynamic parameters = null) => new Template(this, sql, parameters);
 
         protected SqlBuilder AddClause(string name, string sql, object parameters, string joiner, string prefix = "", string postfix = "", bool isInclusive = false)
         {
@@ -152,6 +151,5 @@ namespace Dapper
 
         public SqlBuilder Set(string sql, dynamic parameters = null) =>
              AddClause("set", sql, parameters, " , ", "SET ", "\n", false);
-
     }
 }
