@@ -36,7 +36,6 @@
   <ItemGroup>
     <Compile Remove="DataBase\DataRepository.cs" />
     <Compile Remove="DataBase\IDBProviderConfig.cs" />
-    <Compile Remove="DataBase\SqlBuilder.cs" />
     <Compile Remove="Extension\IDataReaderEx.cs" />
     <Compile Remove="Helper\ValidateCode.cs" />
     <Compile Remove="Net\FTP.cs" />

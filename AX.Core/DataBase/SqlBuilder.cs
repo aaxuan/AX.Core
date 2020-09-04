@@ -1,0 +1,136 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+namespace AX.Core.DataBase
+{
+    public class SqlBuilder
+    {
+        private static string LeftEscapeChar;
+        private static string RightEscapeChar;
+        private static string ParmChar;
+
+        public SqlBuilder(string leftEscapeChar, string rightEscapeChar, string parmChar)
+        {
+            LeftEscapeChar = leftEscapeChar;
+            RightEscapeChar = rightEscapeChar;
+            ParmChar = parmChar;
+        }
+
+        #region EscapeChar 关键字
+
+        public List<string> UseEscapeChar(ICollection<PropertyInfo> props)
+        { return props.Select(p => string.Format("{0}{1}{2}", LeftEscapeChar, p.Name, RightEscapeChar)).ToList(); }
+
+        #endregion EscapeChar 关键字
+
+        #region ParmChar 参数关键字
+
+        public string UseParmChar(string parm)
+        {
+            return string.Format("{0}{1}", ParmChar, parm);
+        }
+
+        public List<string> UseParmChar(ICollection<PropertyInfo> parms)
+        {
+            return parms.Select(p => string.Format("{0}{1}", ParmChar, p)).ToList();
+        }
+
+        #endregion ParmChar 参数关键字
+
+        public List<string> GetEqualConditions(ICollection<PropertyInfo> props)
+        {
+            var result = new List<string>();
+            foreach (var item in props)
+            {
+                result.Add(string.Format("{0} = {1}", UseEscapeChar(item), UseParmChar(item)));
+            }
+            return result;
+        }
+
+        public List<string> GetEqualConditions(params string[] props)
+        {
+            var result = new List<string>();
+            foreach (var item in props)
+            {
+                result.Add(string.Format("{0} = {1}", UseEscapeChar(item), UseParmChar(item)));
+            }
+            return result;
+        }
+
+        #region SQL拼接
+
+        public StringBuilder BuildSelectSqlNoWhere<T>(string tableName, List<PropertyInfo> selectPops)
+        {
+            StringBuilder sb = new StringBuilder();
+            var props = UseEscapeChar(selectPops);
+            sb.AppendFormat("SELECT {0} FROM {1} ", string.Join(",", props), tableName);
+            return sb;
+        }
+
+        public StringBuilder BuildSelectSql<T>(string tableName, List<PropertyInfo> selectPops)
+        {
+            StringBuilder sb = new StringBuilder();
+            var props = UseEscapeChar(selectPops);
+            sb.AppendFormat("SELECT {0} FROM {1} WHERE 1 = 1 ", string.Join(",", props), tableName);
+            return sb;
+        }
+
+        public StringBuilder BuildSelectCountSqlNoWhere(string tableName)
+        {
+            return new StringBuilder("SELECT Count(*) FROM " + tableName + " ");
+        }
+
+        public StringBuilder BuildSelectCountSql(string tableName)
+        {
+            return new StringBuilder("SELECT Count(*) FROM " + tableName + " WHERE 1 = 1");
+        }
+
+        // ********** ********** ********** **********
+
+        public StringBuilder BuildInsertSql<T>(string tableName)
+        {
+            StringBuilder sb = new StringBuilder();
+            var properties = Schema.SchemaProvider.GetInsertProperties<T>();
+            var props = UseEscapeChar(properties);
+            var parms = UseParmChar(properties);
+            sb.AppendFormat("INSERT INTO {0} ({1}) VALUES ({2}) ", tableName, string.Join(",", props), string.Join(",", parms));
+            return sb;
+        }
+
+        // ********** ********** ********** **********
+
+        public StringBuilder BuildUpdateByIdSql<T>(string tableName, params string[] updateFields)
+        {
+            StringBuilder sb = new StringBuilder();
+            var setValues = GetEqualConditions(updateFields);
+            var whereProp = GetEqualConditions(SchemaProvider.GetPrimaryKey<T>().Name);
+            sb.AppendFormat("UPDATE {0} SET {1} WHERE {2} ", tableName, string.Join(",", setValues), string.Join(" AND ", whereProp));
+            return sb;
+        }
+
+        // ********** ********** ********** **********
+
+        public StringBuilder BuildDeleteTableSqlNoWhere(string tableName)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("DELETE FROM {0} ", tableName);
+            return sb;
+        }
+
+        public StringBuilder BuildDeleteTableSql(string tableName)
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("DELETE FROM {0} WHERE 1 = 1 ", tableName);
+            return sb;
+        }
+
+        public StringBuilder BuildDeleteByIdSql<T>(string tableName)
+        {
+            var sb = BuildDeleteTableSql(tableName);
+            sb.AppendFormat(" AND {0} ", GetEqualConditions(SchemaProvider.GetPrimaryKey<T>().Name).First());
+            return sb;
+        }
+
+        #endregion SQL拼接
+    }

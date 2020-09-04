@@ -14,8 +14,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AX.Core.Tests", "AX.Core.Te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Contrib", "Dapper-main\Dapper.Contrib\Dapper.Contrib.csproj", "{64D1C44F-4197-4DDF-AA56-B448A2E4B3C3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.SqlBuilder", "Dapper-main\Dapper.SqlBuilder\Dapper.SqlBuilder.csproj", "{DD1C0550-3B45-48AE-B0C7-628D20167ADC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +32,6 @@ Global
 		{64D1C44F-4197-4DDF-AA56-B448A2E4B3C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64D1C44F-4197-4DDF-AA56-B448A2E4B3C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64D1C44F-4197-4DDF-AA56-B448A2E4B3C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD1C0550-3B45-48AE-B0C7-628D20167ADC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD1C0550-3B45-48AE-B0C7-628D20167ADC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD1C0550-3B45-48AE-B0C7-628D20167ADC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD1C0550-3B45-48AE-B0C7-628D20167ADC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

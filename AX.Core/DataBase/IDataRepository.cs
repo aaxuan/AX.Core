@@ -37,6 +37,8 @@ namespace AX.Core.DataBase
 
         T Insert<T>(T entity);
 
+        List<T> BatchInsert<T>(List<T> entities);
+
         #endregion 增
 
         #region 删
