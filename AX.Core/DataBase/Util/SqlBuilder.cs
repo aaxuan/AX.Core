@@ -13,7 +13,9 @@ namespace AX.Core.DataBase
         private string RightEscapeChar = string.Empty;
         private string ParmChar = string.Empty;
 
-        public SqlBuilder() { }
+        public SqlBuilder()
+        {
+        }
 
         public SqlBuilder(string leftEscapeChar, string rightEscapeChar, string parmChar)
         {
@@ -39,7 +41,7 @@ namespace AX.Core.DataBase
         public SqlBuilder BuildSelect(string tableName)
         {
             Sqlsb.Clear();
-            Sqlsb.AppendFormat("SELECT * FROM {0} ",  tableName);
+            Sqlsb.AppendFormat("SELECT * FROM {0} ", tableName);
             return this;
         }
 
@@ -53,7 +55,7 @@ namespace AX.Core.DataBase
         public SqlBuilder BuildSelectCount(string tableName)
         {
             Sqlsb.Clear();
-            Sqlsb.AppendFormat("SELECT Count(*) FROM {1} ", tableName);
+            Sqlsb.Append($"SELECT Count(*) FROM {tableName} ");
             return this;
         }
 
@@ -82,6 +84,28 @@ namespace AX.Core.DataBase
         }
 
         #endregion SQL语句主体模板
+
+        public SqlBuilder Where()
+        {
+            if (Sqlsb.ToString().ToLower().Contains("where"))
+            { Sqlsb.Append(" AND "); }
+            else
+            { Sqlsb.Append(" WHERE "); }
+            return this;
+        }
+
+        public SqlBuilder AppendColumnNameEqualsValue(PropertyInfo propertyInfos)
+        {
+            Sqlsb.Append($" {propertyInfos.Name} = {ParmChar}{propertyInfos.Name}");
+            return this;
+        }
+
+        public SqlBuilder AppendSql(string sql)
+        {
+            if (sql.StartsWith(" "))
+            { Sqlsb.Append(sql); }
+            return this;
+        }
 
         public string ToSql()
         {

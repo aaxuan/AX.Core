@@ -16,6 +16,8 @@ namespace AX.Core.DataBase.DataRepositories
     public class DapperRepository : IDataRepository
     {
         internal virtual string DbParmChar { get; }
+        internal IAdapter Adapter { get; }
+        internal SqlBuilder InnerSqlBuilder { get { return new SqlBuilder(Adapter.RightEscapeChar, Adapter.LeftEscapeChar, Adapter.DbParmChar); } }
 
         internal DynamicParameters GetDynamicParameters(string sql, dynamic[] args)
         {
@@ -110,6 +112,8 @@ namespace AX.Core.DataBase.DataRepositories
         {
             dbConnection.CheckIsNull();
             Connection = dbConnection;
+            DataBaseType = DBFactory.GetDataBaseType(Connection);
+            Adapter = DBFactory.GetAdapter(DataBaseType);
         }
 
         #region 属性
@@ -117,6 +121,8 @@ namespace AX.Core.DataBase.DataRepositories
         public DbConnection Connection { get; }
 
         public DbTransaction Transaction { get; }
+
+        public DataBaseType DataBaseType { get; }
 
         #endregion 属性
 
@@ -158,10 +164,9 @@ namespace AX.Core.DataBase.DataRepositories
         public T Insert<T>(T entity)
         {
             var type = typeof(T);
-            var key = TypeMaper.GetSingleKey<T>();
             var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
-            var sql = new SqlBuilder().BuildInsert(tableName, allProperties).ToSql();
+            var sql = InnerSqlBuilder.BuildInsert(tableName, allProperties).ToSql();
             InnerExecuteNonQuery(sql, entity);
             return entity;
         }
@@ -171,7 +176,7 @@ namespace AX.Core.DataBase.DataRepositories
             var type = typeof(T);
             var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
-            var sql = new SqlBuilder().BuildInsert(tableName, allProperties).ToSql();
+            var sql = InnerSqlBuilder.BuildInsert(tableName, allProperties).ToSql();
             InnerExecuteNonQuery(sql, entities);
             return entities;
         }
@@ -183,7 +188,7 @@ namespace AX.Core.DataBase.DataRepositories
         public int DeleteTable<T>()
         {
             var tableName = TypeMaper.GetTableName<T>();
-            var sql = new SqlBuilder().BuildDelete(tableName).ToSql();
+            var sql = InnerSqlBuilder.BuildDelete(tableName).ToSql();
             return InnerExecuteNonQuery(sql, null);
         }
 
@@ -193,16 +198,15 @@ namespace AX.Core.DataBase.DataRepositories
 
             var keyProperties = TypeMaper.GetSingleKey<T>();
             var tableName = TypeMaper.GetTableName<T>();
-            var sql = new SqlBuilder().BuildDelete(tableName).ToSql();
-            sql = string.Concat(sql, string.Format(" WHERE {0} = @{0}", keyProperties.Name));
+            var sql = InnerSqlBuilder.BuildDelete(tableName).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return InnerExecuteNonQuery(sql.ToString(), entity);
         }
 
         public int Delete<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildDelete(TypeMaper.GetTableName<T>()), sql);
+                sql = InnerSqlBuilder.BuildDelete(TypeMaper.GetTableName<T>()).AppendSql(sql).ToSql();
             }
             return InnerExecuteNonQuery(sql, args);
         }
@@ -218,9 +222,7 @@ namespace AX.Core.DataBase.DataRepositories
             var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
             var noKeyProperties = allProperties.Except(new List<PropertyInfo>() { keyProperties }).ToList();
-
-            var sql = new SqlBuilder().BuildUpdate(tableName, noKeyProperties).ToSql();
-            sql = string.Concat(sql, " WHERE {0} = @{0}", keyProperties.Name);
+            var sql = InnerSqlBuilder.BuildUpdate(tableName, noKeyProperties).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return InnerExecuteNonQuery(sql.ToString(), entity);
         }
 
@@ -237,8 +239,7 @@ namespace AX.Core.DataBase.DataRepositories
             allProperties = allProperties.Where(p => arrayfields.Contains(p.Name.ToLower())).ToList();
             var noKeyProperties = allProperties.Except(new List<PropertyInfo>() { keyProperties }).ToList();
 
-            var sql = new SqlBuilder().BuildUpdate(tableName, noKeyProperties).ToSql();
-            sql = string.Concat(sql, " WHERE {0} = @{0}", keyProperties.Name);
+            var sql = InnerSqlBuilder.BuildUpdate(tableName, noKeyProperties).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return InnerExecuteNonQuery(sql.ToString(), entity);
         }
 
@@ -249,39 +250,39 @@ namespace AX.Core.DataBase.DataRepositories
         public bool IsExists<T>(dynamic PrimaryKey)
         {
             var keyProperties = TypeMaper.GetSingleKey<T>();
-            var sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            var sql = InnerSqlBuilder.BuildSelectCount(TypeMaper.GetTableName<T>()).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return Convert.ToBoolean(InnerExecuteScalar<int>(sql, PrimaryKey));
         }
 
         public bool IsExists<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), sql);
+                sql = InnerSqlBuilder.BuildSelectCount(TypeMaper.GetTableName<T>()).AppendSql(sql).ToSql();
             }
             return Convert.ToBoolean(InnerExecuteScalar<int>(sql, args));
         }
 
         public int GetCount<T>()
         {
-            var sql = new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()).ToSql();
+            var sql = InnerSqlBuilder.BuildSelectCount(TypeMaper.GetTableName<T>()).ToSql();
             return InnerExecuteScalar<int>(sql, null);
         }
 
         public int GetCount<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), sql);
+                sql = InnerSqlBuilder.BuildSelectCount(TypeMaper.GetTableName<T>()).AppendSql(sql).ToSql();
             }
             return InnerExecuteScalar<int>(sql, args);
         }
 
         public T FirstOrDefault<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+                sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).AppendSql(sql).ToSql();
             }
             return InnerQueryFirstOrDefault<T>(sql, args);
         }
@@ -289,15 +290,15 @@ namespace AX.Core.DataBase.DataRepositories
         public T FirstOrDefaultById<T>(dynamic PrimaryKey)
         {
             var keyProperties = TypeMaper.GetSingleKey<T>();
-            var sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            var sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return InnerExecuteScalar<int>(sql, PrimaryKey);
         }
 
         public T SingleOrDefault<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+                sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).AppendSql(sql).ToSql();
             }
             return InnerQuerySingleOrDefault<T>(sql, args);
         }
@@ -305,21 +306,21 @@ namespace AX.Core.DataBase.DataRepositories
         public T SingleOrDefaultById<T>(dynamic PrimaryKey)
         {
             var keyProperties = TypeMaper.GetSingleKey<T>();
-            var sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            var sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).Where().AppendColumnNameEqualsValue(keyProperties).ToSql();
             return InnerExecuteScalar<int>(sql, PrimaryKey);
         }
 
         public List<T> GetAll<T>()
         {
-            var sql = new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).ToSql();
+            var sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).ToSql();
             return InnerQuery<T>(sql, null).ToList();
         }
 
         public List<T> GetList<T>(string sql, params dynamic[] args)
         {
-            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
             {
-                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+                sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).AppendSql(sql).ToSql();
             }
             return InnerQuery<T>(sql, null).ToList();
         }
@@ -335,7 +336,7 @@ namespace AX.Core.DataBase.DataRepositories
 
         public string GetCreateTableSql<T>()
         {
-            return DBFactory.GetAdapter(DBFactory.GetDataBaseType(Connection)).GetCreateTableSql(TypeMaper.GetTableName<T>(), TypeMaper.GetSingleKey<T>().Name, TypeMaper.GetProperties(typeof(T)));
+            return Adapter.GetCreateTableSql(TypeMaper.GetTableName<T>(), TypeMaper.GetSingleKey<T>().Name, TypeMaper.GetProperties(typeof(T)));
         }
 
         public string UpdateSchema<T>(bool execute)
@@ -344,10 +345,9 @@ namespace AX.Core.DataBase.DataRepositories
             var dbName = Connection.Database;
             var tableName = TypeMaper.GetTableName<T>();
             var column = TypeMaper.GetProperties(typeof(T));
-            var adapter = DBFactory.GetAdapter(DBFactory.GetDataBaseType(Connection));
 
             //判断表是否存在
-            var exitSql = adapter.GetTableExitSql(tableName, dbName);
+            var exitSql = Adapter.GetTableExitSql(tableName, dbName);
             if (ExecuteScalar<int>(exitSql) <= 0)
             {
                 result.Append(GetCreateTableSql<T>());
@@ -358,10 +358,10 @@ namespace AX.Core.DataBase.DataRepositories
                 for (int i = 0; i < column.Count; i++)
                 {
                     var item = column[i];
-                    var filedExitSql = adapter.GetColumnExitSql(item.Name, tableName, dbName);
+                    var filedExitSql = Adapter.GetColumnExitSql(item.Name, tableName, dbName);
                     if (ExecuteScalar<int>(filedExitSql) <= 0)
                     {
-                        result.Append(adapter.GetCreateColumnSql(tableName, item));
+                        result.Append(Adapter.GetCreateColumnSql(tableName, item));
                     }
                 }
             }

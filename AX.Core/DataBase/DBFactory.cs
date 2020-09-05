@@ -19,6 +19,7 @@ namespace AX.Core.DataBase
             dbConnection.CheckIsNull();
             if (AxCoreGlobalSettings.DataBaseUseDapper)
             {
+                return new DataBase.DataRepositories.DapperRepository(dbConnection);
             }
             throw new NotSupportedException();
         }

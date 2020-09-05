@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 
@@ -49,36 +48,28 @@ namespace AX.Core.DataBase.Adapters
 
         private string GetType(PropertyInfo item)
         {
-            switch (Type.GetTypeCode(item.PropertyType))
+            var lowerName = item.PropertyType.FullName.ToLower();
+
+            if (lowerName.Contains("boolean"))
+            { return "bit(1)"; }
+            if (lowerName.Contains("datetime"))
+            { return "datetime"; }
+            if (lowerName.Contains("decimal"))
+            { return "decimal(10, 2)"; }
+            if (lowerName.Contains("double"))
+            { return "double"; }
+            if (lowerName.Contains("int"))
+            { return "int(11)"; }
+            if (lowerName.Contains("string"))
             {
-                case TypeCode.Boolean: return "bit(1)";
-                case TypeCode.Byte: break;
-                case TypeCode.Char: break;
-                case TypeCode.DateTime: return "datetime";
-                case TypeCode.DBNull: break;
-                case TypeCode.Decimal: return "decimal(10, 2)";
-                case TypeCode.Double: return "double";
-                case TypeCode.Empty: break;
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64: return "int(11)";
-                case TypeCode.Object: break;
-                case TypeCode.SByte: break;
-                case TypeCode.Single: break;
-                case TypeCode.String:
-                    {
-                        var length = Reflection.PropertyInfoManage.GetMaxStringLength(item);
-                        if (length <= 0)
-                        { return "varchar(255)"; }
-                        else
-                        { return $"varchar({length})"; }
-                    }
-                case TypeCode.UInt16: break;
-                case TypeCode.UInt32: break;
-                case TypeCode.UInt64: break;
-                default: break;
+                var length = Reflection.PropertyInfoManage.GetMaxStringLength(item);
+                if (length <= 0)
+                { return "varchar(255)"; }
+                else
+                { return $"varchar({length})"; }
             }
-            return "未匹配类型";
+
+            throw new System.NotSupportedException($"未匹配字段对应数据库类型 {item.PropertyType.FullName}");
         }
     }
 }
