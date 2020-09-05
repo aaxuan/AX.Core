@@ -19,6 +19,8 @@ namespace AX.Core.Config
             Name = name;
             this.FilePath = filepath;
             Current = TypeManager.CreateInstance<T>();
+            if (File.Exists(filepath))
+            { Load(); }
         }
 
         #region 属性
@@ -49,14 +51,19 @@ namespace AX.Core.Config
 
                 configText.Append(item);
             }
-            Current = JObject.Parse(configText.ToString()) as T;
+            Current = Newtonsoft.Json.JsonConvert.DeserializeObject<T>(configText.ToString());
             return true;
         }
 
         public bool Save()
         {
-            File.WriteAllText(FilePath, Current.ToString());
+            File.WriteAllText(FilePath, Current.ToJson());
             return true;
+        }
+
+        public T GetCurrentConfig()
+        {
+            return Current;
         }
     }
 }

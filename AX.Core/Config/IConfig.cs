@@ -21,5 +21,6 @@ namespace AX.Core.Config
 
     public interface IConfigT<T> : IConfig where T : class
     {
+        T GetCurrentConfig();
     }
 }

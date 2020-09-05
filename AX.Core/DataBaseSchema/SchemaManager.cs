@@ -12,7 +12,7 @@ namespace AX.Core.DataBaseSchema
             {
                 case DataBaseType.None: throw new NotSupportedException();
                 case DataBaseType.MySql: return new MySqlSchemaProvider();
-                case DataBaseType.SqlLite: return new SQLiteSchemaProvider();
+                //case DataBaseType.SqlLite: return new SQLiteSchemaProvider();
                 default: throw new NotSupportedException();
             }
             throw new NotSupportedException();

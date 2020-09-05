@@ -1,4 +1,6 @@
-﻿using AX.Core.DataBase.Config;
+﻿using AX.Core.CommonModel.Exceptions;
+using AX.Core.DataBase.Config;
+using AX.Core.Extension;
 using Dapper;
 using System;
 using System.Collections.Generic;
@@ -7,11 +9,109 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AX.Core.DataBase.DataRepositories
 {
     public class DapperRepository : IDataRepository
     {
+        internal virtual string DbParmChar { get; }
+
+        internal DynamicParameters GetDynamicParameters(string sql, dynamic[] args)
+        {
+            DynamicParameters result = new DynamicParameters();
+            var regexStr = DbParmChar + "\\w+";
+            var parmars = Regex.Matches(sql, regexStr);
+
+            //无参
+            if (parmars.Count <= 0 || args == null || args.Length <= 0) { return result; }
+            //多参 一对象
+            if (parmars.Count > 1 && args.Length == 1)
+            {
+                result.AddDynamicParams(args[0]);
+                return result;
+            }
+
+            if (parmars.Count != args.Length)
+            {
+                throw new AXDataBaseException($"参数数量错误 请检查SQL语句【{sql}】 参数【{string.Join(",", args)}】", sql);
+            }
+
+            //一一对应
+            for (int i = 0; i < parmars.Count; i++)
+            {
+                Match parm = parmars[i];
+                result.Add(parm.Value.Substring(1, parm.Value.Length - 1), args[i]);
+            }
+            return result;
+        }
+
+        internal T InnerExecuteScalar<T>(string sql, params dynamic[] args)
+        {
+            try
+            {
+                return Connection.ExecuteScalar<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
+            }
+            catch (Exception ex)
+            {
+                throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        internal int InnerExecuteNonQuery(string sql, params dynamic[] args)
+        {
+            try
+            {
+                return Connection.Execute(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
+            }
+            catch (Exception ex)
+            {
+                throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        internal T InnerQueryFirstOrDefault<T>(string sql, params dynamic[] args)
+        {
+            try
+            {
+                return Connection.QueryFirstOrDefault<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
+            }
+            catch (Exception ex)
+            {
+                throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        internal T InnerQuerySingleOrDefault<T>(string sql, params dynamic[] args)
+        {
+            try
+            {
+                return Connection.QuerySingleOrDefault<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
+            }
+            catch (Exception ex)
+            {
+                throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        internal List<T> InnerQuery<T>(string sql, params dynamic[] args)
+        {
+            try
+            {
+                return Connection.Query<T>(sql, GetDynamicParameters(sql, args), Transaction, commandTimeout: GlobalConfig.CommandTimeout).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        public DapperRepository(DbConnection dbConnection)
+        {
+            dbConnection.CheckIsNull();
+            Connection = dbConnection;
+        }
+
         #region 属性
 
         public DbConnection Connection { get; }
@@ -33,11 +133,23 @@ namespace AX.Core.DataBase.DataRepositories
 
         #endregion 事务
 
-        public bool TestConnection() => throw new NotSupportedException();
+        public bool TestConnection()
+        {
+            var result = InnerExecuteScalar<string>("SELECT 'test' AS test;");
+            if (string.IsNullOrWhiteSpace(result))
+            { return false; }
+            return true;
+        }
 
-        public int ExecuteNonQuery(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public int ExecuteNonQuery(string sql, params dynamic[] args)
+        {
+            return InnerExecuteNonQuery(sql, args);
+        }
 
-        public T ExecuteScalar<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public T ExecuteScalar<T>(string sql, params dynamic[] args)
+        {
+            return InnerExecuteScalar<T>(sql, args);
+        }
 
         public void Save<T>(T entity) => throw new NotSupportedException();
 
@@ -49,25 +161,18 @@ namespace AX.Core.DataBase.DataRepositories
             var key = TypeMaper.GetSingleKey<T>();
             var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
-            var sbColumnList = string.Join(",", allProperties.Select(p => p.Name));
-            var sbParameterList = string.Join(",", allProperties.Select(p => "@" + p.Name));
-            var sql = $"insert into {tableName} ({sbColumnList}) values ({sbParameterList})";
-            Connection.Execute(sql, entity, Transaction, GlobalConfig.CommandTimeout);
+            var sql = new SqlBuilder().BuildInsert(tableName, allProperties).ToSql();
+            InnerExecuteNonQuery(sql, entity);
             return entity;
         }
 
         public List<T> BatchInsert<T>(List<T> entities)
         {
             var type = typeof(T);
-            var tablename = TypeMaper.GetTableName<T>();
+            var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
-            var sbColumnList = string.Join(",", allProperties.Select(p => p.Name));
-            var sbParameterList = string.Join(",", allProperties.Select(p => "@" + p.Name));
-            var wasClosed = Connection.State == ConnectionState.Closed;
-            if (wasClosed) Connection.Open();
-            var cmd = $"insert into {tablename} ({sbColumnList}) values ({sbParameterList})";
-            Connection.Execute(cmd, entities, Transaction, GlobalConfig.CommandTimeout);
-            if (wasClosed) Connection.Close();
+            var sql = new SqlBuilder().BuildInsert(tableName, allProperties).ToSql();
+            InnerExecuteNonQuery(sql, entities);
             return entities;
         }
 
@@ -78,8 +183,8 @@ namespace AX.Core.DataBase.DataRepositories
         public int DeleteTable<T>()
         {
             var tableName = TypeMaper.GetTableName<T>();
-            var sql = $"delete from {tableName}";
-            return Connection.Execute(sql, null, Transaction, GlobalConfig.CommandTimeout);
+            var sql = new SqlBuilder().BuildDelete(tableName).ToSql();
+            return InnerExecuteNonQuery(sql, null);
         }
 
         public int Delete<T>(T entity)
@@ -88,16 +193,19 @@ namespace AX.Core.DataBase.DataRepositories
 
             var keyProperties = TypeMaper.GetSingleKey<T>();
             var tableName = TypeMaper.GetTableName<T>();
-
-            var sql = new StringBuilder();
-            sql.AppendFormat("delete from {0} where ", tableName);
-            sql.AppendFormat(" where {0} = @{0}", keyProperties.Name);
-            return Connection.Execute(sql.ToString(), entity, Transaction, GlobalConfig.CommandTimeout);
+            var sql = new SqlBuilder().BuildDelete(tableName).ToSql();
+            sql = string.Concat(sql, string.Format(" WHERE {0} = @{0}", keyProperties.Name));
+            return InnerExecuteNonQuery(sql.ToString(), entity);
         }
 
-        public int Delete<T>(dynamic PrimaryKey) => throw new NotSupportedException();
-
-        public int Delete<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public int Delete<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildDelete(TypeMaper.GetTableName<T>()), sql);
+            }
+            return InnerExecuteNonQuery(sql, args);
+        }
 
         #endregion 删
 
@@ -109,64 +217,167 @@ namespace AX.Core.DataBase.DataRepositories
             var keyProperties = TypeMaper.GetSingleKey<T>();
             var tableName = TypeMaper.GetTableName<T>();
             var allProperties = TypeMaper.GetProperties(type);
-            var noKeyProperties = allProperties.Except(new List<PropertyInfo>() { keyProperties });
+            var noKeyProperties = allProperties.Except(new List<PropertyInfo>() { keyProperties }).ToList();
 
-            var sql = new StringBuilder();
-            sql.AppendFormat("update {0} set ", tableName);
-            sql.Append(string.Join(",", noKeyProperties.Select(p => string.Format(" {0} = @{0}", p.Name))));
-            sql.AppendFormat(" where {0} = @{0}", keyProperties.Name);
-
-            return Connection.Execute(sql.ToString(), entity, commandTimeout: GlobalConfig.CommandTimeout, transaction: Transaction);
-
+            var sql = new SqlBuilder().BuildUpdate(tableName, noKeyProperties).ToSql();
+            sql = string.Concat(sql, " WHERE {0} = @{0}", keyProperties.Name);
+            return InnerExecuteNonQuery(sql.ToString(), entity);
         }
 
-        public int Update<T>(T entity, string fields) => throw new NotSupportedException();
+        public int Update<T>(T entity, string fields)
+        {
+            fields.CheckIsNullOrWhiteSpace();
+            var type = typeof(T);
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var tableName = TypeMaper.GetTableName<T>();
+            var allProperties = TypeMaper.GetProperties(type);
+
+            var arrayfields = fields.ToLower().Split(',');
+
+            allProperties = allProperties.Where(p => arrayfields.Contains(p.Name.ToLower())).ToList();
+            var noKeyProperties = allProperties.Except(new List<PropertyInfo>() { keyProperties }).ToList();
+
+            var sql = new SqlBuilder().BuildUpdate(tableName, noKeyProperties).ToSql();
+            sql = string.Concat(sql, " WHERE {0} = @{0}", keyProperties.Name);
+            return InnerExecuteNonQuery(sql.ToString(), entity);
+        }
 
         #endregion 改
 
         #region 查
 
-        public bool IsExists<T>(dynamic PrimaryKey) => throw new NotSupportedException();
+        public bool IsExists<T>(dynamic PrimaryKey)
+        {
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            return Convert.ToBoolean(InnerExecuteScalar<int>(sql, PrimaryKey));
+        }
 
-        public bool IsExists<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public bool IsExists<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), sql);
+            }
+            return Convert.ToBoolean(InnerExecuteScalar<int>(sql, args));
+        }
 
-        public int GetCount<T>() => throw new NotSupportedException();
+        public int GetCount<T>()
+        {
+            var sql = new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()).ToSql();
+            return InnerExecuteScalar<int>(sql, null);
+        }
 
-        public int GetCount<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public int GetCount<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildSelectCount(TypeMaper.GetTableName<T>()), sql);
+            }
+            return InnerExecuteScalar<int>(sql, args);
+        }
 
-        public T FirstOrDefault<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public T FirstOrDefault<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+            }
+            return InnerQueryFirstOrDefault<T>(sql, args);
+        }
 
-        public T FirstOrDefaultById<T>(dynamic PrimaryKey) => throw new NotSupportedException();
+        public T FirstOrDefaultById<T>(dynamic PrimaryKey)
+        {
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            return InnerExecuteScalar<int>(sql, PrimaryKey);
+        }
+
+        public T SingleOrDefault<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+            }
+            return InnerQuerySingleOrDefault<T>(sql, args);
+        }
 
         public T SingleOrDefaultById<T>(dynamic PrimaryKey)
         {
-            var key = TypeMaper.GetSingleKey<T>();
-            var tableName = TypeMaper.GetTableName<T>();
-            var sql = $"select * from {tableName} where {key.Name} = @id";
-            var dynParams = new DynamicParameters();
-            dynParams.Add("@id", PrimaryKey);
-            T result = default;
-            result = Connection.Query<T>(sql, dynParams, Transaction, commandTimeout: Config.GlobalConfig.CommandTimeout).FirstOrDefault();
-            return result;
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), string.Format("WHERE {0} = @{0}", keyProperties.Name));
+            return InnerExecuteScalar<int>(sql, PrimaryKey);
         }
-
-        public T SingleOrDefault<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
 
         public List<T> GetAll<T>()
         {
-            var tableName = TypeMaper.GetTableName<T>();
-            var sql = $"select * from {tableName}";
-            return Connection.Query<T>(sql, null, Transaction, commandTimeout: Config.GlobalConfig.CommandTimeout).ToList();
+            var sql = new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).ToSql();
+            return InnerQuery<T>(sql, null).ToList();
         }
 
-        public List<T> GetList<T>(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public List<T> GetList<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = string.Concat(new SqlBuilder().BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))), sql);
+            }
+            return InnerQuery<T>(sql, null).ToList();
+        }
 
-        public DataTable GetDataTable(string sql, params dynamic[] args) => throw new NotSupportedException();
+        public DataTable GetDataTable(string sql, params dynamic[] args)
+        {
+            var result = new DataTable();
+            result.Load(Connection.ExecuteReader(sql, args, Transaction, commandTimeout: GlobalConfig.CommandTimeout));
+            return result;
+        }
 
         #endregion 查
 
-        public string GetCreateTableSql<T>() => throw new NotSupportedException();
+        public string GetCreateTableSql<T>()
+        {
+            return DBFactory.GetAdapter(DBFactory.GetDataBaseType(Connection)).GetCreateTableSql(TypeMaper.GetTableName<T>(), TypeMaper.GetSingleKey<T>().Name, TypeMaper.GetProperties(typeof(T)));
+        }
 
-        public string UpdateSchema<T>(bool execute) => throw new NotSupportedException();
+        public string UpdateSchema<T>(bool execute)
+        {
+            var result = new StringBuilder();
+            var dbName = Connection.Database;
+            var tableName = TypeMaper.GetTableName<T>();
+            var column = TypeMaper.GetProperties(typeof(T));
+            var adapter = DBFactory.GetAdapter(DBFactory.GetDataBaseType(Connection));
+
+            //判断表是否存在
+            var exitSql = adapter.GetTableExitSql(tableName, dbName);
+            if (ExecuteScalar<int>(exitSql) <= 0)
+            {
+                result.Append(GetCreateTableSql<T>());
+            }
+            //判断字段是否存在
+            else
+            {
+                for (int i = 0; i < column.Count; i++)
+                {
+                    var item = column[i];
+                    var filedExitSql = adapter.GetColumnExitSql(item.Name, tableName, dbName);
+                    if (ExecuteScalar<int>(filedExitSql) <= 0)
+                    {
+                        result.Append(adapter.GetCreateColumnSql(tableName, item));
+                    }
+                }
+            }
+
+            if (execute && result.Length > 0)
+            { InnerExecuteNonQuery(result.ToString()); }
+            return result.ToString();
+        }
+
+        public void Dispose()
+        {
+            if (Connection != null)
+            {
+                this.Connection.Close();
+                this.Connection.Dispose();
+            }
+        }
     }
 }

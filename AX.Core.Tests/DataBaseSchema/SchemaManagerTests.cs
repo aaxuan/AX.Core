@@ -20,6 +20,7 @@ namespace AX.Core.DataBaseSchema.Tests
                     table.Colmuns = provider.LoadDBColmun(db, table, conn);
                 }
             }
+            System.Diagnostics.Debug.WriteLine(dbs.Count);
         }
     }
 }

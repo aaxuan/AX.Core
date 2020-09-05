@@ -1,10 +1,4 @@
-﻿using AX.Core.DataBase.Schema;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Diagnostics;
-using static AX.Core.DataBase.DBFactory;
-
-namespace AX.Core.DataBase.Tests
+﻿namespace AX.Core.DataBase.Tests
 {
     //public class DemoTable
     //{
@@ -50,7 +44,7 @@ namespace AX.Core.DataBase.Tests
     //        //var alltable = db.LoadDBSchemaTables(alldb.First().CodeName);
     //        //var allcolmun = db.LoadDBColmuns(alldb.First().CodeName, alltable.First().CodeName);
     //        Debug.Print(db.Delete<DemoTable>("WHERE 1 = 1", null).ToString());
-    //        Assert.AreEqual(db.GetCount<DemoTable>(), 0); 
+    //        Assert.AreEqual(db.GetCount<DemoTable>(), 0);
 
     //        var model = db.Insert(new DemoTable() { CreateTime = DateTime.Now, Isuse = true, Money = 98.8M, Count = 50 });
     //        Assert.IsNotNull(model.Id);

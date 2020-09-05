@@ -32,5 +32,10 @@ namespace AX.Core.Cache
         {
             return AllCacheDict.AllToList();
         }
+
+        public static bool Clear()
+        {
+            return AllCacheDict.Clear();
+        }
     }
 }

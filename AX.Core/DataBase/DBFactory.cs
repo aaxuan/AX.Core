@@ -39,5 +39,16 @@ namespace AX.Core.DataBase
 
             return DataBaseType.None;
         }
+
+        public static IAdapter GetAdapter(DataBaseType dataBaseType)
+        {
+            switch (dataBaseType)
+            {
+                case DataBaseType.None: return null;
+                case DataBaseType.MySql: return new Adapters.MysqlAdapter();
+                case DataBaseType.SQLite: throw new NotSupportedException();
+                default: return null;
+            }
+        }
     }
 }

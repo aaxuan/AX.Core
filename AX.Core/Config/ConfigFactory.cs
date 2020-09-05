@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AX.Core.Config
 {
-    public class ConfigFactory
+    public static class ConfigFactory
     {
         private static readonly MemoryCache<IConfig> AllConfigDict = new MemoryCache<IConfig>("全局配置管理对象");
 
@@ -19,19 +19,24 @@ namespace AX.Core.Config
             return cache;
         }
 
-        public static IConfigT<T> GetCache<T>(string cacheName) where T : class
+        public static IConfigT<T> GetConfig<T>(string configName) where T : class
         {
-            cacheName.CheckIsNullOrWhiteSpace();
-            if (AllConfigDict.ContainsKey(cacheName))
+            configName.CheckIsNullOrWhiteSpace();
+            if (AllConfigDict.ContainsKey(configName))
             {
-                return AllConfigDict[cacheName] as IConfigT<T>;
+                return AllConfigDict[configName] as IConfigT<T>;
             }
             return null;
         }
 
-        public static List<IConfig> GetAllCaCheList()
+        public static List<IConfig> GetAllconfigList()
         {
             return AllConfigDict.AllToList();
+        }
+
+        public static bool Clear()
+        {
+            return AllConfigDict.Clear();
         }
     }
 }

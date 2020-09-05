@@ -47,8 +47,6 @@ namespace AX.Core.DataBase
 
         int Delete<T>(T entity);
 
-        int Delete<T>(dynamic PrimaryKey);
-
         int Delete<T>(string sql, params dynamic[] args);
 
         #endregion 删
