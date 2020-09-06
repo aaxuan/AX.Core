@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -27,13 +28,7 @@ namespace AX.Core.DataBase.Adapters
             var result = new StringBuilder();
 
             result.Append($"CREATE TABLE IF NOT EXISTS {tableName} (");
-            for (int i = 0; i < propertyInfos.Count; i++)
-            {
-                var item = propertyInfos[i];
-                result.Append($"{item.Name.ToLower()} {GetType(item)}");
-                if (i != propertyInfos.Count)
-                { result.Append($","); }
-            }
+            result.Append(string.Join(",", propertyInfos.Select(p => $"{p.Name.ToLower()} {GetType(p)}")));
             result.Append($",PRIMARY KEY({KeyName})");
             result.Append($")");
             result.Append($"ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COMMENT = '{tableName}';");
