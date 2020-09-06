@@ -31,6 +31,12 @@ namespace AX.Core.Net
             return this;
         }
 
+        public SingleHttpRequset SetReferer(string referer)
+        {
+            InnerHttpWebRequest.Referer = referer;
+            return this;
+        }
+
         public SingleHttpRequset Init(HttpMethod httpMethod, string url)
         {
             url.CheckIsNullOrWhiteSpace();
@@ -55,21 +61,22 @@ namespace AX.Core.Net
             return this;
         }
 
-        //public static void SetFormData(string data)
-        //{
-        //    //移除换行符
-        //    data = data.Replace("\r", string.Empty);
-        //    data = data.Replace("\n", string.Empty);
-        //    //编码参数
-        //    //arg = System.Web.HttpUtility.UrlEncode(arg);
-        //    HttpWebRequest.ContentType = "application/x-www-form-urlencoded";
+        public SingleHttpRequset SetFormData(string data)
+        {
+            //移除换行符
+            data = data.Replace("\r", string.Empty);
+            data = data.Replace("\n", string.Empty);
+            //编码参数
+            //arg = System.Web.HttpUtility.UrlEncode(arg);
+            InnerHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
 
-        //    var valueBytes = Encoding.GetBytes(data);
-        //    HttpWebRequest.ContentLength = valueBytes.Length;
-        //    Stream requsetStream = HttpWebRequest.GetRequestStream();
-        //    requsetStream.Write(valueBytes, 0, valueBytes.Length);
-        //    requsetStream.Close();
-        //}
+            var valueBytes = Encoding.GetBytes(data);
+            InnerHttpWebRequest.ContentLength = valueBytes.Length;
+            Stream requsetStream = InnerHttpWebRequest.GetRequestStream();
+            requsetStream.Write(valueBytes, 0, valueBytes.Length);
+            requsetStream.Close();
+            return this;
+        }
 
         public string GetStringResult()
         {

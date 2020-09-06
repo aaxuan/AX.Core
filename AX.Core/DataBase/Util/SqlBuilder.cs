@@ -104,6 +104,8 @@ namespace AX.Core.DataBase
         {
             if (sql.StartsWith(" "))
             { Sqlsb.Append(sql); }
+            else
+            { Sqlsb.Append(" ").Append(sql); }
             return this;
         }
 

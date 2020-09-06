@@ -15,14 +15,13 @@ namespace AX.Core.DataBase.DataRepositories
 {
     public class DapperRepository : IDataRepository
     {
-        internal virtual string DbParmChar { get; }
         internal IAdapter Adapter { get; }
         internal SqlBuilder InnerSqlBuilder { get { return new SqlBuilder(Adapter.RightEscapeChar, Adapter.LeftEscapeChar, Adapter.DbParmChar); } }
 
         internal DynamicParameters GetDynamicParameters(string sql, dynamic[] args)
         {
             DynamicParameters result = new DynamicParameters();
-            var regexStr = DbParmChar + "\\w+";
+            var regexStr = $"{Adapter.DbParmChar}\\w+";
             var parmars = Regex.Matches(sql, regexStr);
 
             //无参
