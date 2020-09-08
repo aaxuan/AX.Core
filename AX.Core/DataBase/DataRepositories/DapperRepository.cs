@@ -47,6 +47,8 @@ namespace AX.Core.DataBase.DataRepositories
             return result;
         }
 
+        #region 内部实现
+
         internal T InnerExecuteScalar<T>(string sql, params dynamic[] args)
         {
             try
@@ -95,17 +97,19 @@ namespace AX.Core.DataBase.DataRepositories
             }
         }
 
-        internal List<T> InnerQuery<T>(string sql, params dynamic[] args)
+        internal IEnumerable<T> InnerQuery<T>(string sql, params dynamic[] args)
         {
             try
             {
-                return Connection.Query<T>(sql, GetDynamicParameters(sql, args), Transaction, commandTimeout: GlobalConfig.CommandTimeout).ToList();
+                return Connection.Query<T>(sql, GetDynamicParameters(sql, args), Transaction, commandTimeout: GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
             {
                 throw new AXDataBaseException(ex.Message, sql);
             }
         }
+
+        #endregion 内部实现
 
         public DapperRepository(DbConnection dbConnection)
         {
@@ -322,6 +326,21 @@ namespace AX.Core.DataBase.DataRepositories
                 sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).AppendSql(sql).ToSql();
             }
             return InnerQuery<T>(sql, null).ToList();
+        }
+
+        public IEnumerable<T> GetQuery<T>()
+        {
+            var sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).ToSql();
+            return InnerQuery<T>(sql, null);
+        }
+
+        public IEnumerable<T> GetQuery<T>(string sql, params dynamic[] args)
+        {
+            if (sql.TrimStart().ToLower().StartsWith("where", StringComparison.InvariantCulture))
+            {
+                sql = InnerSqlBuilder.BuildSelect(TypeMaper.GetTableName<T>(), TypeMaper.GetProperties(typeof(T))).AppendSql(sql).ToSql();
+            }
+            return InnerQuery<T>(sql, null);
         }
 
         public DataTable GetDataTable(string sql, params dynamic[] args)

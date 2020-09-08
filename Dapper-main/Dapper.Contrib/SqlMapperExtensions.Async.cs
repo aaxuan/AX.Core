@@ -12,16 +12,16 @@ namespace Dapper.Contrib.Extensions
     public static partial class SqlMapperExtensions
     {
         /// <summary>
-        /// Returns a single entity by a single id from table "Ts" asynchronously using Task. T must be of interface type. 
-        /// Id must be marked with [Key] attribute.
-        /// Created entity is tracked/intercepted for changes and used by the Update() extension. 
+        /// Returns a single entity by a single id from table "Ts" asynchronously using Task. T must
+        /// be of interface type. Id must be marked with [Key] attribute. Created entity is
+        /// tracked/intercepted for changes and used by the Update() extension.
         /// </summary>
-        /// <typeparam name="T">Interface type to create and populate</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="id">Id of the entity to get, must be marked with [Key] attribute</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>Entity of T</returns>
+        /// <typeparam name="T"> Interface type to create and populate </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="id"> Id of the entity to get, must be marked with [Key] attribute </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <returns> Entity of T </returns>
         public static async Task<T> GetAsync<T>(this IDbConnection connection, dynamic id, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
@@ -68,16 +68,15 @@ namespace Dapper.Contrib.Extensions
         }
 
         /// <summary>
-        /// Returns a list of entities from table "Ts".  
-        /// Id of T must be marked with [Key] attribute.
-        /// Entities created from interfaces are tracked/intercepted for changes and used by the Update() extension
-        /// for optimal performance. 
+        /// Returns a list of entities from table "Ts". Id of T must be marked with [Key] attribute.
+        /// Entities created from interfaces are tracked/intercepted for changes and used by the
+        /// Update() extension for optimal performance.
         /// </summary>
-        /// <typeparam name="T">Interface or type to create and populate</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>Entity of T</returns>
+        /// <typeparam name="T"> Interface or type to create and populate </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <returns> Entity of T </returns>
         public static Task<IEnumerable<T>> GetAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
@@ -129,13 +128,15 @@ namespace Dapper.Contrib.Extensions
         /// <summary>
         /// Inserts an entity into table "Ts" asynchronously using Task and returns identity id.
         /// </summary>
-        /// <typeparam name="T">The type being inserted.</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToInsert">Entity to insert</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <param name="sqlAdapter">The specific ISqlAdapter to use, auto-detected based on connection if null</param>
-        /// <returns>Identity of inserted entity</returns>
+        /// <typeparam name="T"> The type being inserted. </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="entityToInsert"> Entity to insert </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <param name="sqlAdapter">
+        /// The specific ISqlAdapter to use, auto-detected based on connection if null
+        /// </param>
+        /// <returns> Identity of inserted entity </returns>
         public static Task<int> InsertAsync<T>(this IDbConnection connection, T entityToInsert, IDbTransaction transaction = null,
             int? commandTimeout = null, ISqlAdapter sqlAdapter = null) where T : class
         {
@@ -198,14 +199,15 @@ namespace Dapper.Contrib.Extensions
         }
 
         /// <summary>
-        /// Updates entity in table "Ts" asynchronously using Task, checks if the entity is modified if the entity is tracked by the Get() extension.
+        /// Updates entity in table "Ts" asynchronously using Task, checks if the entity is modified
+        /// if the entity is tracked by the Get() extension.
         /// </summary>
-        /// <typeparam name="T">Type to be updated</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToUpdate">Entity to be updated</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if updated, false if not found or not modified (tracked entities)</returns>
+        /// <typeparam name="T"> Type to be updated </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="entityToUpdate"> Entity to be updated </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <returns> true if updated, false if not found or not modified (tracked entities) </returns>
         public static async Task<bool> UpdateAsync<T>(this IDbConnection connection, T entityToUpdate, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             if ((entityToUpdate is IProxy proxy) && !proxy.IsDirty)
@@ -271,12 +273,12 @@ namespace Dapper.Contrib.Extensions
         /// <summary>
         /// Delete entity in table "Ts" asynchronously using Task.
         /// </summary>
-        /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="entityToDelete">Entity to delete</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if not found</returns>
+        /// <typeparam name="T"> Type of entity </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="entityToDelete"> Entity to delete </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <returns> true if deleted, false if not found </returns>
         public static async Task<bool> DeleteAsync<T>(this IDbConnection connection, T entityToDelete, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             if (entityToDelete == null)
@@ -328,11 +330,11 @@ namespace Dapper.Contrib.Extensions
         /// <summary>
         /// Delete all entities in the table related to the type T asynchronously using Task.
         /// </summary>
-        /// <typeparam name="T">Type of entity</typeparam>
-        /// <param name="connection">Open SqlConnection</param>
-        /// <param name="transaction">The transaction to run under, null (the default) if none</param>
-        /// <param name="commandTimeout">Number of seconds before command execution timeout</param>
-        /// <returns>true if deleted, false if none found</returns>
+        /// <typeparam name="T"> Type of entity </typeparam>
+        /// <param name="connection"> Open SqlConnection </param>
+        /// <param name="transaction"> The transaction to run under, null (the default) if none </param>
+        /// <param name="commandTimeout"> Number of seconds before command execution timeout </param>
+        /// <returns> true if deleted, false if none found </returns>
         public static async Task<bool> DeleteAllAsync<T>(this IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var type = typeof(T);
@@ -346,34 +348,34 @@ namespace Dapper.Contrib.Extensions
 public partial interface ISqlAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert);
 }
 
 public partial class SqlServerAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
         var cmd = $"INSERT INTO {tableName} ({columnList}) values ({parameterList}); SELECT SCOPE_IDENTITY() id";
@@ -396,17 +398,17 @@ public partial class SqlServerAdapter
 public partial class SqlCeServerAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
         var cmd = $"INSERT INTO {tableName} ({columnList}) VALUES ({parameterList})";
@@ -429,17 +431,17 @@ public partial class SqlCeServerAdapter
 public partial class MySqlAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName,
         string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
@@ -462,17 +464,17 @@ public partial class MySqlAdapter
 public partial class PostgresAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
         var sb = new StringBuilder();
@@ -499,7 +501,8 @@ public partial class PostgresAdapter
 
         var results = await connection.QueryAsync(sb.ToString(), entityToInsert, transaction, commandTimeout).ConfigureAwait(false);
 
-        // Return the key by assigning the corresponding property in the object - by product is that it supports compound primary keys
+        // Return the key by assigning the corresponding property in the object - by product is that
+        // it supports compound primary keys
         var id = 0;
         foreach (var p in propertyInfos)
         {
@@ -515,17 +518,17 @@ public partial class PostgresAdapter
 public partial class SQLiteAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
         var cmd = $"INSERT INTO {tableName} ({columnList}) VALUES ({parameterList}); SELECT last_insert_rowid() id";
@@ -545,17 +548,17 @@ public partial class SQLiteAdapter
 public partial class FbAdapter
 {
     /// <summary>
-    /// Inserts <paramref name="entityToInsert"/> into the database, returning the Id of the row created.
+    /// Inserts <paramref name="entityToInsert" /> into the database, returning the Id of the row created.
     /// </summary>
-    /// <param name="connection">The connection to use.</param>
-    /// <param name="transaction">The transaction to use.</param>
-    /// <param name="commandTimeout">The command timeout to use.</param>
-    /// <param name="tableName">The table to insert into.</param>
-    /// <param name="columnList">The columns to set with this insert.</param>
-    /// <param name="parameterList">The parameters to set for this insert.</param>
-    /// <param name="keyProperties">The key columns in this table.</param>
-    /// <param name="entityToInsert">The entity to insert.</param>
-    /// <returns>The Id of the row created.</returns>
+    /// <param name="connection"> The connection to use. </param>
+    /// <param name="transaction"> The transaction to use. </param>
+    /// <param name="commandTimeout"> The command timeout to use. </param>
+    /// <param name="tableName"> The table to insert into. </param>
+    /// <param name="columnList"> The columns to set with this insert. </param>
+    /// <param name="parameterList"> The parameters to set for this insert. </param>
+    /// <param name="keyProperties"> The key columns in this table. </param>
+    /// <param name="entityToInsert"> The entity to insert. </param>
+    /// <returns> The Id of the row created. </returns>
     public async Task<int> InsertAsync(IDbConnection connection, IDbTransaction transaction, int? commandTimeout, string tableName, string columnList, string parameterList, IEnumerable<PropertyInfo> keyProperties, object entityToInsert)
     {
         var cmd = $"insert into {tableName} ({columnList}) values ({parameterList})";

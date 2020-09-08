@@ -5,17 +5,25 @@ using System.Data.Common;
 
 namespace AX.Core.DataBase
 {
-    public interface IDataRepository : IDisposable
+    /// <summary>
+    /// 链接基类
+    /// </summary>
+    public interface IDataRepositoryConnection
     {
-        #region 属性
-
         DbConnection Connection { get; }
 
-        DbTransaction Transaction { get; }
+        bool TestConnection();
 
-        #endregion 属性
+        int ExecuteNonQuery(string sql, params dynamic[] args);
 
+        T ExecuteScalar<T>(string sql, params dynamic[] args);
+    }
+
+    public interface IDataRepositoryTransaction
+    {
         #region 事务
+
+        DbTransaction Transaction { get; }
 
         void AbortTransaction();
 
@@ -24,15 +32,10 @@ namespace AX.Core.DataBase
         void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted);
 
         #endregion 事务
+    }
 
-        bool TestConnection();
-
-        int ExecuteNonQuery(string sql, params dynamic[] args);
-
-        T ExecuteScalar<T>(string sql, params dynamic[] args);
-
-        void Save<T>(T entity);
-
+    public interface IDataRepositoryCURD
+    {
         #region 增
 
         T Insert<T>(T entity);
@@ -79,9 +82,18 @@ namespace AX.Core.DataBase
 
         List<T> GetList<T>(string sql, params dynamic[] args);
 
+        IEnumerable<T> GetQuery<T>();
+
+        IEnumerable<T> GetQuery<T>(string sql, params dynamic[] args);
+
         DataTable GetDataTable(string sql, params dynamic[] args);
 
         #endregion 查
+    }
+
+    public interface IDataRepository : IDataRepositoryConnection, IDataRepositoryTransaction, IDataRepositoryCURD, IDisposable
+    {
+        void Save<T>(T entity);
 
         string GetCreateTableSql<T>();
 
