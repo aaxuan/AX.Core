@@ -77,7 +77,7 @@
             if (userAgent.Contains("chrome"))
             { return "Chrome"; }
             if (userAgent.Contains("safari"))
-            { return "safari"; }
+            { return "Safari"; }
             if (userAgent.Contains("firefox"))
             { return "Firefox"; }
             if (userAgent.Contains("opera"))
