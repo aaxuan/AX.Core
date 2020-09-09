@@ -19,6 +19,21 @@ namespace AX.Core.Net
         public CookieContainer CookieContainer = new CookieContainer();
         public Encoding Encoding = Encoding.UTF8;
 
+        public SingleHttpRequset Init(HttpMethod httpMethod, string url)
+        {
+            url.CheckIsNullOrWhiteSpace();
+            //不包含协议头则自动追加 HTTP 协议头
+            if (url.StartsWith("http://", System.StringComparison.CurrentCultureIgnoreCase) == false && url.StartsWith("https://", System.StringComparison.CurrentCultureIgnoreCase) == false)
+            { url = string.Concat("http://", url); }
+            InnerHttpWebRequest = null;
+            InnerHttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
+            InnerHttpWebRequest.Method = httpMethod.ToString();
+            InnerHttpWebRequest.CookieContainer = CookieContainer;
+            return this;
+        }
+
+        #region 设置属性
+
         public SingleHttpRequset SetUserAgent(string userAgent)
         {
             InnerHttpWebRequest.UserAgent = userAgent;
@@ -37,17 +52,14 @@ namespace AX.Core.Net
             return this;
         }
 
-        public SingleHttpRequset Init(HttpMethod httpMethod, string url)
-        {
-            url.CheckIsNullOrWhiteSpace();
-            if (url.StartsWith("http://", System.StringComparison.CurrentCultureIgnoreCase) == false && url.StartsWith("https://", System.StringComparison.CurrentCultureIgnoreCase) == false)
-            { url = string.Concat("http://", url); }
-            InnerHttpWebRequest = null;
-            InnerHttpWebRequest = WebRequest.Create(url) as HttpWebRequest;
-            InnerHttpWebRequest.Method = httpMethod.ToString();
-            InnerHttpWebRequest.CookieContainer = CookieContainer;
-            return this;
-        }
+        #endregion 设置属性
+
+        #region 设置参数
+
+        // content-type 常见的主要有如下3种：
+        //application/x-www-form-urlencoded
+        //multipart/form-data
+        //application/json
 
         public SingleHttpRequset SetJsonData<T>(T data)
         {
@@ -77,6 +89,8 @@ namespace AX.Core.Net
             requsetStream.Close();
             return this;
         }
+
+        #endregion 设置参数
 
         public string GetStringResult()
         {

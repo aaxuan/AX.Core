@@ -21,8 +21,8 @@ namespace AX.Core.Net
         /// <summary>
         /// 创建 HttpClient
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <param name="url"> </param>
+        /// <returns> </returns>
         public static HttpClient CreateHttpClient(string url)
         {
             HttpClient httpclient;
