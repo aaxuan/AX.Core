@@ -40,5 +40,10 @@ namespace AX.Core.RunLog
             Console.WriteLine(GlobalLogManager.CreateMessage(LogLevel.Waring, msg));
             Console.ResetColor();
         }
+
+        public void Line()
+        {
+            Console.WriteLine("---------- ---------- ----------");
+        }
     }
 }

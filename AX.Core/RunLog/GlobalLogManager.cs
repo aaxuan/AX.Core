@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace AX.Core.RunLog
 {
@@ -8,7 +9,7 @@ namespace AX.Core.RunLog
 
         public static string CreateMessage(LogLevel logLevel, string message)
         {
-            return $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss,fff}] [{logLevel,6}] {message}";
+            return $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss,fff}] [{logLevel,6}] [{Thread.CurrentThread.ManagedThreadId}] {message}";
         }
     }
 }

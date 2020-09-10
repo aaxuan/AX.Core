@@ -10,8 +10,11 @@ namespace AX.Core.DataBase
         string RightEscapeChar { get; }
 
         string GetColumnExitSql(string fieldName, string tableName, string dataBaseName);
+
         string GetCreateColumnSql(string tableName, PropertyInfo item);
+
         string GetCreateTableSql(string tableName, string KeyName, List<PropertyInfo> propertyInfos);
+
         string GetTableExitSql(string tableName, string dataBaseName);
     }
 }

@@ -11,5 +11,7 @@
         void Waring(string msg);
 
         void Debug(string msg);
+
+        void Line();
     }
 }
