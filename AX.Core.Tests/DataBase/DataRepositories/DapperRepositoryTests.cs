@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 
 namespace AX.Core.DataBase.DataRepositories.Tests
@@ -23,9 +24,20 @@ namespace AX.Core.DataBase.DataRepositories.Tests
     public class DapperRepositoryTests
     {
         [TestMethod()]
-        public void DapperRepositoryTest()
+        public void DapperRepositoryTestManager()
         {
-            var db = DBFactory.GetDataRepository(new MySql.Data.MySqlClient.MySqlConnection("server=localhost;userid=root;pwd=;database=test;sslmode=none;"));
+            var dict = new Dictionary<DataBaseType, DbConnection>();
+            dict[DataBaseType.MySql] = new MySql.Data.MySqlClient.MySqlConnection("server=localhost;userid=root;pwd=;database=test;sslmode=none;");
+
+            foreach (var item in dict)
+            {
+                DapperRepositoryTest(item.Value);
+            }
+        }
+
+        public void DapperRepositoryTest(DbConnection dbConnection)
+        {
+            var db = DBFactory.GetDataRepository(dbConnection);
             Assert.IsTrue(db.TestConnection());
 
             var sql1 = db.GetCreateTableSql<DemoTable>();
