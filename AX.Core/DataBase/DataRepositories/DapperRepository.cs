@@ -143,7 +143,7 @@ namespace AX.Core.DataBase.DataRepositories
 
         public DbConnection Connection { get; }
 
-        public DbTransaction Transaction { get; }
+        public DbTransaction Transaction { get; private set; }
 
         public DataBaseType DataBaseType { get; }
 
@@ -152,13 +152,30 @@ namespace AX.Core.DataBase.DataRepositories
         #region 事务
 
         public void AbortTransaction()
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction == null)
+            { throw new AXDataBaseException("Transaction 对象不存在"); }
+            Transaction.Rollback();
+            Transaction.Dispose();
+            Transaction = null;
+        }
 
         public void CompleteTransaction()
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction == null)
+            { throw new AXDataBaseException("Transaction 对象不存在"); }
+            Transaction.Commit();
+            Transaction.Rollback();
+            Transaction.Dispose();
+            Transaction = null;
+        }
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction != null)
+            { throw new AXDataBaseException("Transaction 对象已存在"); }
+            Transaction = Connection.BeginTransaction(isolationLevel);
+        }
 
         #endregion 事务
 
@@ -180,7 +197,20 @@ namespace AX.Core.DataBase.DataRepositories
             return InnerExecuteScalar<T>(sql, args);
         }
 
-        public void Save<T>(T entity) => throw new NotSupportedException();
+        public void Save<T>(T entity)
+        {
+            entity.CheckIsNull();
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var key = keyProperties.GetValue(entity);
+            if (key == null || string.IsNullOrWhiteSpace(key.ToString()))
+            {
+                Insert<T>(entity);
+            }
+            else
+            {
+                Update<T>(entity);
+            }
+        }
 
         #region 增
 
