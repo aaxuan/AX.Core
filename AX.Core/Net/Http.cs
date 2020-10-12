@@ -66,7 +66,7 @@ namespace AX.Core.Net
         public static string PostJson(string url, string content, Encoding encoding = null)
         {
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
 
             var request = WebRequest.Create(url) as HttpWebRequest;
             request.Method = "POST";
@@ -85,7 +85,7 @@ namespace AX.Core.Net
         public static string PostForm(string url, Dictionary<string, string> dic, Encoding encoding = null)
         {
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
 
             HttpWebRequest request = null;
             request = WebRequest.Create(url) as HttpWebRequest;
@@ -118,7 +118,7 @@ namespace AX.Core.Net
                 }
             }
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response.GetResponseStream(), encoding == null ? AxCoreGlobalSettings.Encodeing : encoding))
             {
                 return reader.ReadToEnd();
             }

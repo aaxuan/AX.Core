@@ -10,9 +10,7 @@ namespace AX.Core.Encryption
         {
             value.CheckIsNullOrWhiteSpace();
             if (encodeing == null)
-            {
-                encodeing = Encoding.UTF8;
-            }
+            { encodeing = AxCoreGlobalSettings.Encodeing; }
             var bytes = new MD5CryptoServiceProvider().ComputeHash(encodeing.GetBytes(value));
             var result = new StringBuilder();
             for (int i = 0; i < bytes.Length; i++)

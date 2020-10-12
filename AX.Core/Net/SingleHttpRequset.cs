@@ -17,7 +17,7 @@ namespace AX.Core.Net
     {
         private HttpWebRequest InnerHttpWebRequest;
         public CookieContainer CookieContainer = new CookieContainer();
-        public Encoding Encoding = Encoding.UTF8;
+        public Encoding Encoding = AxCoreGlobalSettings.Encodeing;
 
         public SingleHttpRequset Init(HttpMethod httpMethod, string url)
         {

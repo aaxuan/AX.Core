@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
-using System.Text;
 using System.Threading;
 
 namespace AX.Core.RunLog
@@ -57,7 +56,6 @@ namespace AX.Core.RunLog
     // (msgs.Count > 0) // { // Msg msg = null; // lock (msgs) // { // msg = msgs.Dequeue(); // } //
     // if (msg != null) // { // FileWrite(msg); // } // } // else // { // //判断是否已经发出终止日志并关闭的消息 // if
     // (state) // { // Thread.Sleep(1); // } // else // { // FileClose(); // } // } // } //}
-
     // ////写入日志文本到文件的方法 //private void FileWrite(Msg msg) //{ // try // { // if (writer == null) //
     // { // FileOpen(); // } // else // { // //判断文件到期标志，如果当前文件到期则关闭当前文件创建新的日志文件 // if (DateTime.Now
     // >= TimeSign) // { // FileClose(); // FileOpen(); // } // writer.Write(msg.Datetime); //
@@ -164,7 +162,7 @@ namespace AX.Core.RunLog
             if (stream == null)
             { stream = new FileStream(logfilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite); }
 
-            var writer = new StreamWriter(stream, Encoding.UTF8);
+            var writer = new StreamWriter(stream, AxCoreGlobalSettings.Encodeing);
             CurrentLogFilePath = logfilePath;
             LogWriter = writer;
         }

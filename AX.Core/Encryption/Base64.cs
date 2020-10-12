@@ -10,7 +10,7 @@ namespace AX.Core.Encryption
         {
             value.CheckIsNullOrWhiteSpace();
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
             return encoding.GetString(Convert.FromBase64String(value));
         }
 
@@ -18,7 +18,7 @@ namespace AX.Core.Encryption
         {
             value.CheckIsNullOrWhiteSpace();
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
             return Convert.ToBase64String(encoding.GetBytes(value));
         }
     }

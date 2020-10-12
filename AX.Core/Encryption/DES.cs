@@ -11,7 +11,7 @@ namespace AX.Core.Encryption
         {
             key = key.Substring(0, 8);
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
             byte[] byteData = encoding.GetBytes(data);
             byte[] byteKey = encoding.GetBytes(key);
             DESCryptoServiceProvider desProcider = new DESCryptoServiceProvider();
