@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -53,6 +54,7 @@ namespace AX.Core.DataBase.DataRepositories
         {
             try
             {
+                TraceLog(nameof(InnerExecuteScalar), sql, args);
                 return Connection.ExecuteScalar<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
@@ -65,6 +67,7 @@ namespace AX.Core.DataBase.DataRepositories
         {
             try
             {
+                TraceLog(nameof(InnerExecuteNonQuery), sql, args);
                 return Connection.Execute(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
@@ -77,6 +80,7 @@ namespace AX.Core.DataBase.DataRepositories
         {
             try
             {
+                TraceLog(nameof(InnerQueryFirstOrDefault), sql, args);
                 return Connection.QueryFirstOrDefault<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
@@ -89,6 +93,7 @@ namespace AX.Core.DataBase.DataRepositories
         {
             try
             {
+                TraceLog(nameof(InnerQuerySingleOrDefault), sql, args);
                 return Connection.QuerySingleOrDefault<T>(sql, GetDynamicParameters(sql, args), Transaction, GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
@@ -101,11 +106,26 @@ namespace AX.Core.DataBase.DataRepositories
         {
             try
             {
+                TraceLog(nameof(InnerQuery), sql, args);
                 return Connection.Query<T>(sql, GetDynamicParameters(sql, args), Transaction, commandTimeout: GlobalConfig.CommandTimeout);
             }
             catch (Exception ex)
             {
                 throw new AXDataBaseException(ex.Message, sql);
+            }
+        }
+
+        internal void TraceLog(string methodname, string sql, params dynamic[] args)
+        {
+            if (GlobalConfig.TraceLogSql)
+            {
+                Trace.WriteLine("----- -----");
+                Trace.WriteLine($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss:fff}] [{methodname}] [{sql}]");
+                var parameters = GetDynamicParameters(sql, args);
+                foreach (var item in parameters.ParameterNames)
+                {
+                    Trace.WriteLine($"[{item}]-->[{parameters.Get<object>(item)}]");
+                }
             }
         }
 
@@ -123,7 +143,7 @@ namespace AX.Core.DataBase.DataRepositories
 
         public DbConnection Connection { get; }
 
-        public DbTransaction Transaction { get; }
+        public DbTransaction Transaction { get; private set; }
 
         public DataBaseType DataBaseType { get; }
 
@@ -132,13 +152,30 @@ namespace AX.Core.DataBase.DataRepositories
         #region 事务
 
         public void AbortTransaction()
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction == null)
+            { throw new AXDataBaseException("Transaction 对象不存在"); }
+            Transaction.Rollback();
+            Transaction.Dispose();
+            Transaction = null;
+        }
 
         public void CompleteTransaction()
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction == null)
+            { throw new AXDataBaseException("Transaction 对象不存在"); }
+            Transaction.Commit();
+            Transaction.Rollback();
+            Transaction.Dispose();
+            Transaction = null;
+        }
 
         public void BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.ReadCommitted)
-        { throw new NotSupportedException(); }
+        {
+            if (Transaction != null)
+            { throw new AXDataBaseException("Transaction 对象已存在"); }
+            Transaction = Connection.BeginTransaction(isolationLevel);
+        }
 
         #endregion 事务
 
@@ -160,7 +197,20 @@ namespace AX.Core.DataBase.DataRepositories
             return InnerExecuteScalar<T>(sql, args);
         }
 
-        public void Save<T>(T entity) => throw new NotSupportedException();
+        public void Save<T>(T entity)
+        {
+            entity.CheckIsNull();
+            var keyProperties = TypeMaper.GetSingleKey<T>();
+            var key = keyProperties.GetValue(entity);
+            if (key == null || string.IsNullOrWhiteSpace(key.ToString()))
+            {
+                Insert<T>(entity);
+            }
+            else
+            {
+                Update<T>(entity);
+            }
+        }
 
         #region 增
 

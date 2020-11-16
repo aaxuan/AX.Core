@@ -46,7 +46,7 @@ namespace AX.Core.DataBase
             switch (dataBaseType)
             {
                 case DataBaseType.None: return null;
-                case DataBaseType.MySql: return new Adapters.MysqlAdapter();
+                case DataBaseType.MySql: return new Adapters.MySqlAdapter();
                 case DataBaseType.SQLite: throw new NotSupportedException();
                 default: return null;
             }

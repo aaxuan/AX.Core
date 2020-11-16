@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AX.Core.DataBase.Adapters
 {
-    public class MysqlAdapter : IAdapter
+    public class MySqlAdapter : IAdapter
     {
         public string LeftEscapeChar { get { return "`"; } }
 

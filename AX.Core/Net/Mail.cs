@@ -7,7 +7,7 @@ namespace AX.Core.Net
 {
     public class Mail
     {
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public Encoding Encoding { get; set; } = AxCoreGlobalSettings.Encodeing;
         public bool IsBodyHtml = false;
 
         private string FromAddress;

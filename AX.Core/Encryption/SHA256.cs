@@ -11,7 +11,7 @@ namespace AX.Core.Encryption
         {
             value.CheckIsNullOrWhiteSpace();
             if (encoding == null)
-            { encoding = Encoding.UTF8; }
+            { encoding = AxCoreGlobalSettings.Encodeing; }
             return Convert.ToBase64String(new SHA256Managed().ComputeHash(encoding.GetBytes(value)));
         }
     }
