@@ -46,16 +46,19 @@ namespace AX.Core.Net
             return this;
         }
 
-        public void Send(string toAddress, string body, string subject = "系统通知")
+        public void Send(string toAddress, string body, string subject = null)
         {
             BatchSend(new List<string>() { toAddress }, body, subject);
         }
 
-        public void BatchSend(List<string> toAddress, string body, string subject = "系统通知")
+        public void BatchSend(List<string> toAddress, string body, string subject = null)
         {
+            if (string.IsNullOrWhiteSpace(subject))
+            { subject = AxCoreGlobalSettings.MailDefaultSubject; }
+
             string smtpServer = SmtpServer;
 
-            SmtpClient smtpClient = null;
+            SmtpClient smtpClient;
             if (SmtpPort <= 0)
             { smtpClient = new SmtpClient(smtpServer); }
             else
