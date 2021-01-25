@@ -1,0 +1,32 @@
+﻿using System.Data;
+using System.Text;
+
+namespace AX
+{
+    public static partial class Extention
+    {
+        public static string ToCSV(this DataTable dt)
+        {
+            //以半角逗号（即,）作分隔符，列为空也要表达其存在。
+            //列内容如存在半角逗号（即,）则用半角引号（即""）将该字段值包含起来。
+            //列内容如存在半角引号（即"）则应替换成半角双引号（""）转义，并用半角引号（即""）将该字段值包含起来。
+            StringBuilder sb = new StringBuilder();
+            DataColumn colum;
+            foreach (DataRow row in dt.Rows)
+            {
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    colum = dt.Columns[i];
+                    if (i != 0) sb.Append(",");
+                    if (colum.DataType == typeof(string) && row[colum].ToString().Contains(","))
+                    {
+                        sb.Append("\"" + row[colum].ToString().Replace("\"", "\"\"") + "\"");
+                    }
+                    else sb.Append(row[colum].ToString());
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+    }
+}
