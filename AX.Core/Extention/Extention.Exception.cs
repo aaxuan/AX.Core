@@ -32,6 +32,6 @@ namespace AX
                 builder.Append(GetAllExceptionMsg(ex.InnerException, level + 1));
             }
             return builder.ToString();
-        } 
+        }
     }
 }

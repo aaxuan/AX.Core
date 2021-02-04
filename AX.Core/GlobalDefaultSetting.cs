@@ -12,5 +12,7 @@ namespace AX.Core
         public static Encoding Encoding { get; set; } = Encoding.UTF8;
 
         public static BindingFlags BindingFlags { get; set; } = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public | BindingFlags.Static;
+
+        public static int CommandTimeout { get; set; } = 50000;
     }
 }

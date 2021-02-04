@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AX.Core.Network
+﻿namespace AX.Core.Network
 {
-    class BrowserClientInfo
+    internal class BrowserClientInfo
     {
         /// <summary>
         /// 获取客户端操作系统版本

@@ -3,7 +3,7 @@ using System;
 using System.Text;
 
 namespace AX
-{ 
+{
     public static partial class Extention
     {
         public static string ToString(this byte[] bytes, Encoding encoding = null)
