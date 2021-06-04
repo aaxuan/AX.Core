@@ -12,8 +12,7 @@ namespace AX
     {
         public static bool IsNull(this object obj)
         {
-            if (obj == null)
-            { return true; }
+            if (obj == null) { return true; }
             return false;
         }
 
