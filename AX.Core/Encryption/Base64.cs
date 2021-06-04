@@ -8,16 +8,14 @@ namespace AX.Core.Encryption
         public static string Decrypt(string value, Encoding encoding = null)
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
-            if (encoding == null)
-            { encoding = GlobalDefaultSetting.Encoding; }
+            if (encoding == null) { encoding = GlobalDefaultSetting.Encoding; }
             return encoding.GetString(Convert.FromBase64String(value));
         }
 
         public static string Encrypt(string value, Encoding encoding = null)
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
-            if (encoding == null)
-            { encoding = GlobalDefaultSetting.Encoding; }
+            if (encoding == null) { encoding = GlobalDefaultSetting.Encoding; }
             return Convert.ToBase64String(encoding.GetBytes(value));
         }
     }

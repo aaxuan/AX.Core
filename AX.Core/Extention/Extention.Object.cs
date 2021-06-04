@@ -20,12 +20,14 @@ namespace AX
         /// <summary>
         /// 快速序列化 复杂情况请勿使用
         /// 空引用返回 null
+        /// 该方法尚未完善，可能会抛出异常
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         public static string FastToJson(this object obj)
         {
             if (obj.IsNull()) { return "null"; }
+            if (obj.GetType().IsValueType) { return obj.ToString(); }
             StringBuilder result = new StringBuilder();
             result.Append("{");
             var propertyInfos = obj.GetType().GetProperties();

@@ -22,6 +22,7 @@ namespace AX.Core.Log
             { config.WriteTo.File("logs\\log-.txt", rollingInterval: RollingInterval.Day); }
 
             Serilog.Log.Logger = config.CreateLogger();
+            LogEnvironmentInfo();
         }
 
         public static string LogEnvironmentInfo()

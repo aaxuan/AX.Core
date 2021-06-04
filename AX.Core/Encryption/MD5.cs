@@ -9,8 +9,7 @@ namespace AX.Core.Encryption
         public static string Encrypt(string value, Encoding encoding = null)
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
-            if (encoding == null)
-            { encoding = GlobalDefaultSetting.Encoding; }
+            if (encoding == null) { encoding = GlobalDefaultSetting.Encoding; }
             var bytes = new MD5CryptoServiceProvider().ComputeHash(encoding.GetBytes(value));
             var result = new StringBuilder();
             for (int i = 0; i < bytes.Length; i++)

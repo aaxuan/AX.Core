@@ -9,8 +9,7 @@ namespace AX.Core.Encryption
         public static string Encrypt(string value, Encoding encoding)
         {
             if (value == null) { throw new ArgumentNullException(nameof(value)); }
-            if (encoding == null)
-            { encoding = GlobalDefaultSetting.Encoding; }
+            if (encoding == null) { encoding = GlobalDefaultSetting.Encoding; }
             var result = new StringBuilder();
             var bytes = new SHA1Managed().ComputeHash(encoding.GetBytes(value));
             for (int i = 0; i < bytes.Length; i++)
